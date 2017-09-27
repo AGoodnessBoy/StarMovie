@@ -16,17 +16,46 @@ import java.util.Scanner;
  */
 
 public final class NetworkUtils {
+    //豆瓣电影api URL
     public static final String MOVIE_API="http://api.douban.com/v2/movie/";
     public static final String IN_THEATERS_URL=MOVIE_API+"in_theaters";//热映
     public static final String SEARCH_URL=MOVIE_API+"search";//搜索查询
     public static final String MOVIE_SUBJECT_URL=MOVIE_API+"subject/";//单个条目检索
 
+    //the movie db api URL
+    public static final String THE_MOVIE_DB_API_KEY="5ff6126cef0585783e7849804fc8a188";
+    public static final String THE_MOVIE_DB_API="https://api.themoviedb.org/3/movie/";
+    public static final String MOVIE_POP_URL=THE_MOVIE_DB_API+"popular";
+    public static final String MOVIE_RATE_URL=THE_MOVIE_DB_API+"top_rated";
+
     private static final String format = "json";
 
-    final static  String QUERY_PARAM="q";
-    final static  String TAG_PARAM="tag";
-    final static  String START_PARAM="start";
-    final static  String COUNT_PARAM="count";
+    //豆瓣电影 api 参数
+    final static String QUERY_PARAM="q";
+    final static String TAG_PARAM="tag";
+    final static String START_PARAM="start";
+    final static String COUNT_PARAM="count";
+
+    //the movie db api 参数
+    final static String APIKEY_PARAM="api_key";
+    final static String LANG_PARAM="language";
+    final static String PAGE_PARAM="page";
+
+
+    public static URL buildUrlFromMovieDB(){
+        Uri buildUri = Uri.parse(IN_THEATERS_URL).buildUpon()
+                .appendQueryParameter(START_PARAM,"0")
+                .appendQueryParameter(COUNT_PARAM,"20")
+                .build();
+        URL url = null;
+        try{
+            url = new URL(buildUri.toString());
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        }
+
+        return url;
+    }
 
 
     public static URL buildUrl(){
