@@ -5,24 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.moming.jml.starmovie.MainActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="8dp">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:hint="请输入关键词"
-            android:id="@+id/et_search_movie"
-            android:layout_weight="1"/>
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_search_movie"
-            android:id="@+id/bt_search_movie"
-            android:layout_weight="0"/>
-    </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

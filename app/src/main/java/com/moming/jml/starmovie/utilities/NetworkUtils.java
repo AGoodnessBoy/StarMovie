@@ -31,8 +31,6 @@ public final class NetworkUtils {
     private static final String format = "json";
 
     //豆瓣电影 api 参数
-    final static String QUERY_PARAM="q";
-    final static String TAG_PARAM="tag";
     final static String START_PARAM="start";
     final static String COUNT_PARAM="count";
 
@@ -41,11 +39,27 @@ public final class NetworkUtils {
     final static String LANG_PARAM="language";
     final static String PAGE_PARAM="page";
 
+    public static URL buildMoviePopUrlFromMovieDb(){
+        Uri buildUri = Uri.parse(MOVIE_POP_URL).buildUpon()
+                .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
+                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(PAGE_PARAM,"1")
+                .build();
+        URL url = null;
+        try{
+            url = new URL(buildUri.toString());
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        }
 
-    public static URL buildUrlFromMovieDB(){
-        Uri buildUri = Uri.parse(IN_THEATERS_URL).buildUpon()
-                .appendQueryParameter(START_PARAM,"0")
-                .appendQueryParameter(COUNT_PARAM,"20")
+        return url;
+    }
+
+    public static URL buildMovieTopUrlFromMovieDb(){
+        Uri buildUri = Uri.parse(MOVIE_RATE_URL).buildUpon()
+                .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
+                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(PAGE_PARAM,"1")
                 .build();
         URL url = null;
         try{
