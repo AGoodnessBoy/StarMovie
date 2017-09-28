@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.moming.jml.starmovie.entities.MovieEntity;
+import com.moming.jml.starmovie.entities.NewMovieEntity;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.MovieAdapterViewHolder> {
 
-    private MovieEntity[] mMovieData;
+    private NewMovieEntity[] mMovieData;
 
     private final IndexMovieAdapterOnClickHandler mClickHandler;
 
@@ -45,9 +45,11 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
         Context context =holder.itemView.getContext();
-        holder.mMovieNameTextView.setText(mMovieData[position].getMovie_name());
-        holder.mMovieRatingTextView.setText(mMovieData[position].getMovie_rating());
-        Picasso.with(context).load(mMovieData[position].getMovie_img_url()).into(holder.mMoviePosterImageView);
+        String img_base_url="http://image.tmdb.org/t/p/w300/";
+        holder.mMovieNameTextView.setText(mMovieData[position].getTitle());
+        holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
+        String movie_img_url=img_base_url+mMovieData[position].getImg_path();
+        Picasso.with(context).load(movie_img_url).into(holder.mMoviePosterImageView);
 
     }
 
@@ -74,11 +76,11 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         @Override
         public void onClick(View v) {
             int adapterPosition =getAdapterPosition();
-            String movieId = mMovieData[adapterPosition].getMovie_id();
+            String movieId = mMovieData[adapterPosition].getId();
             mClickHandler.onClick(movieId);
         }
     }
-    public void setMovieData(MovieEntity[] movieData){
+    public void setMovieData(NewMovieEntity[] movieData){
         mMovieData = movieData;
         notifyDataSetChanged();
     }

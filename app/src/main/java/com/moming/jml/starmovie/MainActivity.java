@@ -3,8 +3,8 @@ package com.moming.jml.starmovie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
@@ -13,16 +13,18 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.moming.jml.starmovie.entities.MovieEntity;
+import com.moming.jml.starmovie.entities.NewMovieEntity;
 import com.moming.jml.starmovie.utilities.NetworkUtils;
-import com.moming.jml.starmovie.utilities.OpenMovieJsonUtils;
+import com.moming.jml.starmovie.utilities.OpenMovieJsonUtilsFromMovieDb;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements IndexMovieAdapter.IndexMovieAdapterOnClickHandler{
+
+    final static String SORT_BY_POP ="1";
+    final static String SORT_BY_TOP ="2";
+    final static String SORT_DEFAULT="0";
+
     private RecyclerView mRecyclerView;
     private IndexMovieAdapter theMovieAdaper;
     private TextView mErrorMessageDisplay;
@@ -43,13 +45,13 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
         mRecyclerView.setHasFixedSize(true);
         theMovieAdaper= new IndexMovieAdapter(this);
         mRecyclerView.setAdapter(theMovieAdaper);
-        loadMovieData();
+        loadMovieData(SORT_DEFAULT);
     }
 
-    private void loadMovieData(){
+    private void loadMovieData(String sortBy){
         showMovieData();
         FetchMovieTask movieTask = new FetchMovieTask();
-        movieTask.execute();
+        movieTask.execute(sortBy);
 
     }
     private void showMovieData(){
@@ -74,10 +76,10 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
         int theSelectedItemId=item.getItemId();
         switch (theSelectedItemId){
             case R.id.action_sort_by_popular:
-
+                loadMovieData(SORT_BY_POP);
                 break;
             case R.id.action_sort_by_rating:
-
+                loadMovieData(SORT_BY_TOP);
                 break;
             default:
 
@@ -96,15 +98,29 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
 
     }
 
-    public class FetchMovieTask extends AsyncTask<Void,Void,MovieEntity[]>{
+    public class FetchMovieTask extends AsyncTask<String,Void,NewMovieEntity[]>{
         @Override
-        protected MovieEntity[] doInBackground(Void... params) {
-            URL movieRequestUrl = NetworkUtils.buildUrl();
+        protected NewMovieEntity[] doInBackground(String... params) {
+            String sortBy = params[0];
+            URL finalUrl=null;
+
+            switch (sortBy){
+                case SORT_BY_POP:
+                    finalUrl=NetworkUtils.buildMoviePopUrlFromMovieDb();
+                    break;
+                case SORT_BY_TOP:
+                    finalUrl=NetworkUtils.buildMovieTopUrlFromMovieDb();
+                    break;
+                default:
+                    finalUrl=NetworkUtils.buildMoviePopUrlFromMovieDb();
+            }
             try{
                 String jsonMovieResponse = NetworkUtils
-                        .getResponseFromHttpUrl(movieRequestUrl);
-                MovieEntity[] simpleData= OpenMovieJsonUtils.getMovieListFromJson(MainActivity.this,jsonMovieResponse);
-                return simpleData;
+                        .getResponseFromHttpUrl(finalUrl);
+                NewMovieEntity[] movieDbData= OpenMovieJsonUtilsFromMovieDb
+                        .getMovieListFromMovieDb(MainActivity.this,jsonMovieResponse);
+                //MovieEntity[] simpleData= OpenMovieJsonUtils.getMovieListFromJson(MainActivity.this,jsonMovieResponse);
+                return movieDbData;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -119,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
 
 
         @Override
-        protected void onPostExecute(MovieEntity[] movieEntities) {
+        protected void onPostExecute(NewMovieEntity[] movieEntities) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieEntities!=null){
                 showMovieData();

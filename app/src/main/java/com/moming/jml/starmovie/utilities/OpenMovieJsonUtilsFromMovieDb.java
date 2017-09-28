@@ -1,5 +1,15 @@
 package com.moming.jml.starmovie.utilities;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.moming.jml.starmovie.entities.NewMovieEntity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by admin on 2017/9/28.
  */
@@ -68,6 +78,69 @@ public final class OpenMovieJsonUtilsFromMovieDb {
     final static String MOVIE_RELEASE_DATE="release_date";//发行时间
     final static String MOVIE_RUNTIME="runtime";//电影时长;
     final static String MOVIE_REVENUE="revenue";//票房；
+
+    public static NewMovieEntity[] getMovieListFromMovieDb(Context context,String callBackJson)
+        throws JSONException{
+
+            NewMovieEntity[] movielist = null;
+
+        JSONObject movieJsonObj = new JSONObject(callBackJson);
+        if (movieJsonObj.has("status_code")){
+            int errorCode = movieJsonObj.getInt("status_code");
+            String errorMsg = movieJsonObj.getString("status_message");
+            if (errorCode==34||errorCode==7){
+                Toast.makeText(context,errorMsg,
+                        Toast.LENGTH_LONG).show();
+                return null;
+            }
+        }
+        Log.v("json",callBackJson);
+        JSONArray movieArray= movieJsonObj.getJSONArray("results");
+
+        int movienumber= movieArray.length();
+        movielist = new  NewMovieEntity[movienumber];
+        for (int i=0;i<movienumber;i++){
+            NewMovieEntity movieTemp = new NewMovieEntity();
+            JSONObject movieTempObj = movieArray.getJSONObject(i);
+            movieTemp.setId(movieTempObj.getString(MOVIE_ID));
+            movieTemp.setImg_path(movieTempObj.getString(MOVIE_IMG_PATH));
+            movieTemp.setTitle(movieTempObj.getString(MOVIE_TITLE));
+            movieTemp.setVote(movieTempObj.getString(MOVIE_VOTE));
+            movielist[i]=movieTemp;
+        }
+        return movielist;
+    }
+
+    public static NewMovieEntity getMovieItemFromMovieDb(Context context,String callbackJson)
+        throws JSONException{
+        NewMovieEntity movieEntity = new NewMovieEntity();
+
+        JSONObject movieItemObj = new JSONObject(callbackJson);
+        if (movieItemObj.has("status_code")){
+            int errorCode = movieItemObj.getInt("status_code");
+            String errorMsg = movieItemObj.getString("status_message");
+            if (errorCode==34||errorCode==7){
+                Toast.makeText(context,errorMsg,
+                        Toast.LENGTH_LONG).show();
+                return null;
+            }
+        }
+
+        movieEntity.setId(movieItemObj.getString(MOVIE_ID));
+        movieEntity.setTitle(movieItemObj.getString(MOVIE_TITLE));
+        movieEntity.setImg_path(movieItemObj.getString(MOVIE_IMG_PATH));
+        movieEntity.setVote(movieItemObj.getString(MOVIE_VOTE));
+        movieEntity.setType(movieItemObj.getJSONArray(MOVIE_TYPE));
+        movieEntity.setCompany(movieItemObj.getJSONArray(MOVIE_COMPANY));
+        movieEntity.setOverview(movieItemObj.getString(MOVIE_OVERVIEW));
+        movieEntity.setStatus(movieItemObj.getString(MOVIE_STATUS));
+        movieEntity.setRuntime(movieItemObj.getString(MOVIE_RUNTIME));
+        movieEntity.setRevenue(movieItemObj.getString(MOVIE_REVENUE));
+        movieEntity.setRelease_date(movieItemObj.getString(MOVIE_RELEASE_DATE));
+
+        return movieEntity;
+
+    }
 
 
 

@@ -1,5 +1,7 @@
 package com.moming.jml.starmovie.entities;
 
+import org.json.JSONArray;
+
 /**
  * Created by jml on 2017/9/28.
  * 电影对象
@@ -47,19 +49,19 @@ public class NewMovieEntity {
         this.overview = overview;
     }
 
-    public String getType() {
+    public JSONArray getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(JSONArray type) {
         this.type = type;
     }
 
-    public String getCompany() {
+    public JSONArray getCompany() {
         return company;
     }
 
-    public void setCompany(String company) {
+    public void setCompany(JSONArray company) {
         this.company = company;
     }
 
@@ -100,8 +102,8 @@ public class NewMovieEntity {
     private String img_path;
     private String vote;
     private String overview;
-    private String type;
-    private String company;
+    private JSONArray type;
+    private JSONArray company;
     private String status;
     private String release_date;
     private String runtime;

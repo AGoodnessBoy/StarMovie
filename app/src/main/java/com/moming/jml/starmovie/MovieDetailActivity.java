@@ -3,22 +3,17 @@ package com.moming.jml.starmovie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.moming.jml.starmovie.entities.MovieEntity;
+import com.moming.jml.starmovie.entities.NewMovieEntity;
 import com.moming.jml.starmovie.utilities.NetworkUtils;
-import com.moming.jml.starmovie.utilities.OpenMovieJsonUtils;
+import com.moming.jml.starmovie.utilities.OpenMovieJsonUtilsFromMovieDb;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.net.URL;
 
 public class MovieDetailActivity extends AppCompatActivity {
@@ -45,10 +40,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         fetchMovieDetailTask.execute(sMovieId);
     }
 
-    public class FetchMovieDetailTask extends AsyncTask<String,Void,MovieEntity>{
+    public class FetchMovieDetailTask extends AsyncTask<String,Void,NewMovieEntity>{
 
         @Override
-        protected MovieEntity doInBackground(String... params) {
+        protected NewMovieEntity doInBackground(String... params) {
 
             if (params==null){
                 return null;
@@ -57,12 +52,13 @@ public class MovieDetailActivity extends AppCompatActivity {
             Log.v("id-ask",movieId);
             Context context =MovieDetailActivity.this;
 
-            URL url = NetworkUtils.buildUrlbyId(movieId);
+            URL url = NetworkUtils.buildMovieItemUrlFromMovieDbById(movieId);
             try {
                 String movieItemJsonReponse = NetworkUtils.getResponseFromHttpUrl(url);
-
-                MovieEntity movieEntity = OpenMovieJsonUtils.getMovieItemFromJson(context,movieItemJsonReponse);
-                Log.v("name",movieEntity.getMovie_name());
+                NewMovieEntity movieEntity = OpenMovieJsonUtilsFromMovieDb
+                        .getMovieItemFromMovieDb(context,movieItemJsonReponse);
+               // MovieEntity movieEntity = OpenMovieJsonUtils.getMovieItemFromJson(context,movieItemJsonReponse);
+                Log.v("name",movieEntity.getTitle());
                 return movieEntity;
 
             } catch (Exception e) {
@@ -72,30 +68,19 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(MovieEntity movieEntity) {
+        protected void onPostExecute(NewMovieEntity movieEntity) {
 
             if (movieEntity==null){
                 //显示错误信息
             }
-            mMovieNameTextView.setText(movieEntity.getMovie_name());
-            mMovieSummaryTextView.setText(movieEntity.getMovie_summary());
-            mMovieRatingTextView.setText(movieEntity.getMovie_rating());
-
-            String actors ="";
-            JSONArray actorJson=movieEntity.getMovie_casts();
-            if (actorJson==null){
-                mMovieCastsTextView.setText("暂无信息");
-            }
-            for (int i=0;i<actorJson.length();i++){
-                try {
-                    JSONObject acttemp=actorJson.getJSONObject(i);
-                    actors=actors+acttemp.getString("name")+",";
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            mMovieCastsTextView.setText(actors);
-            Picasso.with(MovieDetailActivity.this).load(movieEntity.getMovie_img_url()).into(mMoviePosterImageView);
+            String img_base_url="http://image.tmdb.org/t/p/w300/";
+            String movie_img_url=img_base_url+movieEntity.getImg_path();
+            Log.v("image_url",movie_img_url);
+            mMovieNameTextView.setText(movieEntity.getTitle());
+            mMovieSummaryTextView.setText(movieEntity.getOverview());
+            mMovieRatingTextView.setText(movieEntity.getVote());
+           // mMovieCastsTextView.setText(movieEntity.getCompany());
+            Picasso.with(MovieDetailActivity.this).load(movie_img_url).into(mMoviePosterImageView);
 
 
         }

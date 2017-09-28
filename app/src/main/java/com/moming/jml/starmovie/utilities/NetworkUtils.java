@@ -70,6 +70,21 @@ public final class NetworkUtils {
         return url;
     }
 
+    public static URL buildMovieItemUrlFromMovieDbById(String id){
+        String MOVIE_ITEM_URL=THE_MOVIE_DB_API+id;
+        Uri buildUri = Uri.parse(MOVIE_ITEM_URL).buildUpon()
+                .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
+                .appendQueryParameter(LANG_PARAM,"zh").build();
+        URL url = null;
+        try{
+            url = new URL(buildUri.toString());
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
 
     public static URL buildUrl(){
         Uri buildUri = Uri.parse(IN_THEATERS_URL).buildUpon()
