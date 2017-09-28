@@ -19,7 +19,6 @@ public final class NetworkUtils {
     //豆瓣电影api URL
     public static final String MOVIE_API="http://api.douban.com/v2/movie/";
     public static final String IN_THEATERS_URL=MOVIE_API+"in_theaters";//热映
-    public static final String SEARCH_URL=MOVIE_API+"search";//搜索查询
     public static final String MOVIE_SUBJECT_URL=MOVIE_API+"subject/";//单个条目检索
 
     //the movie db api URL
