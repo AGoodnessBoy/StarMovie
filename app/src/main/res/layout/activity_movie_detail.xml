@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context="com.moming.jml.starmovie.MovieDetailActivity">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="280dp"
-        android:id="@+id/iv_movie_banner"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/iv_movie_banner" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/colorAccent"
-        android:layout_below="@id/iv_movie_banner"
         android:id="@+id/layout_of_movie_title"
         >
         <TextView
@@ -41,7 +38,6 @@
         android:text="主演"
         android:textSize="24sp"
         android:id="@+id/tv_title_of_actors"
-        android:layout_below="@id/layout_of_movie_title"
         android:padding="8dp"
         />
     <TextView
@@ -49,8 +45,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:text="主演1,主演2，主演3"
-        android:id="@+id/tv_movie_actors"
-        android:layout_below="@id/tv_title_of_actors"/>
+        android:id="@+id/tv_movie_actors"/>
 
 
     <TextView
@@ -59,7 +54,6 @@
         android:text="简介"
         android:textSize="24sp"
         android:id="@+id/tv_title_of_summary"
-        android:layout_below="@id/tv_movie_actors"
         android:padding="8dp"
         />
     <TextView
@@ -67,8 +61,7 @@
         android:layout_height="wrap_content"
         android:text="@string/summay"
         android:id="@+id/tv_movie_summary_in_detail"
-        android:layout_below="@id/tv_title_of_summary"
         android:padding="8dp"
         />
 
-</RelativeLayout>
+</LinearLayout>

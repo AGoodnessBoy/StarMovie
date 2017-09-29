@@ -1,10 +1,13 @@
 package com.moming.jml.starmovie;
 
 import android.content.Context;
+import android.graphics.Outline;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,6 +53,14 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
         String movie_img_url=img_base_url+mMovieData[position].getImg_path();
         Picasso.with(context).load(movie_img_url).into(holder.mMoviePosterImageView);
+        ViewOutlineProvider mProvider = new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                view.setClipToOutline(true);
+                outline.setRoundRect(16,16,view.getWidth(),view.getHeight(),20);
+            }
+        };
+        holder.mMovieItemFrameLayout.setOutlineProvider(mProvider);
 
     }
 
@@ -64,12 +75,14 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         public final TextView mMovieNameTextView;
         public final TextView mMovieRatingTextView;
         public final ImageView mMoviePosterImageView;
+        public final FrameLayout mMovieItemFrameLayout;
 
         public MovieAdapterViewHolder(View itemView) {
             super(itemView);
             mMovieNameTextView =(TextView)itemView.findViewById(R.id.tv_movie_name);
             mMovieRatingTextView = (TextView)itemView.findViewById(R.id.tv_movie_rating);
             mMoviePosterImageView = (ImageView)itemView.findViewById(R.id.iv_movie_poster);
+            mMovieItemFrameLayout = (FrameLayout)itemView.findViewById(R.id.layout_of_movie_item) ;
             itemView.setOnClickListener(this);
         }
 

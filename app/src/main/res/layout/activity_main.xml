@@ -9,15 +9,17 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rv_movie_list">
+        android:id="@+id/rv_movie_list"
+        android:layout_margin="9dp">
     </android.support.v7.widget.RecyclerView>
     <TextView
         android:id="@+id/tv_error_message_display"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="@string/error_message"
         android:textSize="20sp"
+        android:gravity="center"
         android:visibility="invisible" />
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
