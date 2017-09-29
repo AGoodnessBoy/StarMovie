@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:layout_width="175dp"
-    android:layout_height="262dp"
-    android:layout_margin="9dp"
+    android:layout_width="156dp"
+    android:layout_height="233dp"
+    android:layout_margin="8dp"
     style="@style/ShadowStyle"
     android:background="@drawable/shape"
     android:elevation="2dp"
@@ -12,40 +12,50 @@
 
     <ImageView
         android:id="@+id/iv_movie_poster"
-        android:layout_width="175dp"
-        android:layout_height="262dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/default_movie"
-
-        />
-
+        android:layout_width="match_parent"
+        android:layout_height="233dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/default_movie" />
+<!--
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#fff"
+        android:layout_gravity="bottom"/>
+-->
 
     <LinearLayout
-        android:layout_width="175dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp">
+        android:orientation="vertical"
+        android:background="@drawable/shape">
 
         <TextView
             android:id="@+id/tv_movie_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="绣春刀2：修罗战场"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-
+            android:textColor="#6d6d6d"
+            android:textSize="14sp"
+            android:paddingTop="4dp"
+            android:layout_marginLeft="8dp"/>
         <TextView
-            android:id="@+id/tv_movie_rating"
+            android:id="@+id/tv_movie_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="4dp"
-            android:text="7.7"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+            android:text="2017-07-17"
+            android:layout_marginLeft="8dp"
+            android:textColor="#6d6d6d"
+            android:textSize="14sp" />
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/tv_movie_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7.7"
+        android:textColor="#6d6d6d"
+        android:textSize="14sp" />
 
 </FrameLayout>

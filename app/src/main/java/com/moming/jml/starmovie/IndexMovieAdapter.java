@@ -40,7 +40,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         LayoutInflater inflater =LayoutInflater.from(context);
         boolean shouldAttachToPartentImmediately = false;
 
-        View view  = inflater.inflate(layoutIdForListItem,parent,shouldAttachToPartentImmediately);
+        View view  = inflater.inflate(layoutIdForListItem,parent,false);
 
         return new MovieAdapterViewHolder(view);
     }
@@ -50,14 +50,14 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         Context context =holder.itemView.getContext();
         String img_base_url="http://image.tmdb.org/t/p/w300/";
         holder.mMovieNameTextView.setText(mMovieData[position].getTitle());
-        holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
+        //holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
         String movie_img_url=img_base_url+mMovieData[position].getImg_path();
         Picasso.with(context).load(movie_img_url).into(holder.mMoviePosterImageView);
         ViewOutlineProvider mProvider = new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
                 view.setClipToOutline(true);
-                outline.setRoundRect(16,16,view.getWidth(),view.getHeight(),20);
+                outline.setRoundRect(16,16,view.getWidth(),view.getHeight(),10);
             }
         };
         holder.mMovieItemFrameLayout.setOutlineProvider(mProvider);

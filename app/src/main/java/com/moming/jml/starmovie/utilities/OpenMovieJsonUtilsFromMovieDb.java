@@ -76,8 +76,8 @@ public final class OpenMovieJsonUtilsFromMovieDb {
     final static String MOVIE_COMPANY="production_companies";//电影公司
     final static String MOVIE_STATUS="status";//发行状态
     final static String MOVIE_RELEASE_DATE="release_date";//发行时间
-    final static String MOVIE_RUNTIME="runtime";//电影时长;
-    final static String MOVIE_REVENUE="revenue";//票房；
+    final static String MOVIE_RUNTIME="runtime";//电影时长
+    final static String MOVIE_REVENUE="revenue";//票房
 
     public static NewMovieEntity[] getMovieListFromMovieDb(Context context,String callBackJson)
         throws JSONException{

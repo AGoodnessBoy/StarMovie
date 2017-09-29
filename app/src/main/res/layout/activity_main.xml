@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/rv_movie_list"
-        android:layout_margin="9dp">
+        android:layout_margin="8dp">
     </android.support.v7.widget.RecyclerView>
     <TextView
         android:id="@+id/tv_error_message_display"
