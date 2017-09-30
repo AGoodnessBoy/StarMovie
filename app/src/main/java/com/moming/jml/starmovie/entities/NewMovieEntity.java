@@ -97,6 +97,14 @@ public class NewMovieEntity {
         this.revenue = revenue;
     }
 
+    public String getPoster_path() {
+        return poster_path;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
+    }
+
     private String id;
     private String title;
     private String img_path;
@@ -108,6 +116,7 @@ public class NewMovieEntity {
     private String release_date;
     private String runtime;
     private String revenue;
+    private String poster_path;
 
 
 }

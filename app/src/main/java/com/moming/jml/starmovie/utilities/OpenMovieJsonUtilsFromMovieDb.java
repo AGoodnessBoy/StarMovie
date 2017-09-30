@@ -78,6 +78,7 @@ public final class OpenMovieJsonUtilsFromMovieDb {
     final static String MOVIE_RELEASE_DATE="release_date";//发行时间
     final static String MOVIE_RUNTIME="runtime";//电影时长
     final static String MOVIE_REVENUE="revenue";//票房
+    final static String MOVIE_POSTER_PATH="poster_path";//电影海报
 
     public static NewMovieEntity[] getMovieListFromMovieDb(Context context,String callBackJson)
         throws JSONException{
@@ -103,9 +104,15 @@ public final class OpenMovieJsonUtilsFromMovieDb {
             NewMovieEntity movieTemp = new NewMovieEntity();
             JSONObject movieTempObj = movieArray.getJSONObject(i);
             movieTemp.setId(movieTempObj.getString(MOVIE_ID));
-            movieTemp.setImg_path(movieTempObj.getString(MOVIE_IMG_PATH));
+            if (movieTempObj.getString(MOVIE_POSTER_PATH)==null){
+                movieTemp.setPoster_path(movieTempObj.getString(MOVIE_IMG_PATH));
+            }else {
+                movieTemp.setPoster_path(movieTempObj.getString(MOVIE_POSTER_PATH));
+            }
+
             movieTemp.setTitle(movieTempObj.getString(MOVIE_TITLE));
             movieTemp.setVote(movieTempObj.getString(MOVIE_VOTE));
+            movieTemp.setRelease_date(movieTempObj.getString(MOVIE_RELEASE_DATE));
             movielist[i]=movieTemp;
         }
         return movielist;
@@ -129,6 +136,11 @@ public final class OpenMovieJsonUtilsFromMovieDb {
         movieEntity.setId(movieItemObj.getString(MOVIE_ID));
         movieEntity.setTitle(movieItemObj.getString(MOVIE_TITLE));
         movieEntity.setImg_path(movieItemObj.getString(MOVIE_IMG_PATH));
+        if (movieItemObj.getString(MOVIE_POSTER_PATH)==null){
+            movieEntity.setPoster_path(movieItemObj.getString(MOVIE_IMG_PATH));
+        }else {
+            movieEntity.setPoster_path(movieItemObj.getString(MOVIE_POSTER_PATH));
+        }
         movieEntity.setVote(movieItemObj.getString(MOVIE_VOTE));
         movieEntity.setType(movieItemObj.getJSONArray(MOVIE_TYPE));
         movieEntity.setCompany(movieItemObj.getJSONArray(MOVIE_COMPANY));

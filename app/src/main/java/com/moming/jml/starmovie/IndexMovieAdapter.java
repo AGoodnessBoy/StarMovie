@@ -50,8 +50,8 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         Context context =holder.itemView.getContext();
         String img_base_url="http://image.tmdb.org/t/p/w300/";
         holder.mMovieNameTextView.setText(mMovieData[position].getTitle());
-        //holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
-        String movie_img_url=img_base_url+mMovieData[position].getImg_path();
+        holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
+        String movie_img_url=img_base_url+mMovieData[position].getPoster_path();
         Picasso.with(context).load(movie_img_url).into(holder.mMoviePosterImageView);
         ViewOutlineProvider mProvider = new ViewOutlineProvider() {
             @Override

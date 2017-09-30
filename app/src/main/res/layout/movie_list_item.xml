@@ -10,19 +10,19 @@
     android:id="@+id/layout_of_movie_item">
 
 
-    <ImageView
-        android:id="@+id/iv_movie_poster"
-        android:layout_width="match_parent"
-        android:layout_height="233dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/default_movie" />
-<!--
+    <!--
     <view
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="#fff"
         android:layout_gravity="bottom"/>
 -->
+    <ImageView
+        android:id="@+id/iv_movie_poster"
+        android:layout_width="match_parent"
+        android:layout_height="233dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/default_movie" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,23 +39,33 @@
             android:textColor="#6d6d6d"
             android:textSize="14sp"
             android:paddingTop="4dp"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginStart="12dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:lines="1"/>
         <TextView
             android:id="@+id/tv_movie_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2017-07-17"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="12dp"
             android:textColor="#6d6d6d"
             android:textSize="14sp" />
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/tv_movie_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right"
+        android:background="@drawable/rating_bg"
+        android:gravity="center"
         android:text="7.7"
-        android:textColor="#6d6d6d"
-        android:textSize="14sp" />
+        android:textColor="#fff"
+        android:textSize="16sp" />
+
+
 
 </FrameLayout>

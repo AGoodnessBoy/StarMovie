@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StarMovie</string>
+    <string name="app_name">Star Movie</string>
     <string name="popular_sort">最受欢迎</string>
     <string name="rating_sort">评分最高</string>
     <string name="error_message">结果错误</string>
