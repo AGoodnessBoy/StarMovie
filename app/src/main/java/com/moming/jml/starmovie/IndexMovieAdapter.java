@@ -40,7 +40,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         LayoutInflater inflater =LayoutInflater.from(context);
         boolean shouldAttachToPartentImmediately = false;
 
-        View view  = inflater.inflate(layoutIdForListItem,parent,false);
+        View view  = inflater.inflate(layoutIdForListItem,parent,shouldAttachToPartentImmediately);
 
         return new MovieAdapterViewHolder(view);
     }
@@ -51,8 +51,10 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         String img_base_url="http://image.tmdb.org/t/p/w300/";
         holder.mMovieNameTextView.setText(mMovieData[position].getTitle());
         holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
+        holder.mMovieDateTextView.setText(mMovieData[position].getRelease_date());
         String movie_img_url=img_base_url+mMovieData[position].getPoster_path();
-        Picasso.with(context).load(movie_img_url).into(holder.mMoviePosterImageView);
+        Picasso.with(context).load(movie_img_url)
+                .error(R.drawable.default_img).into(holder.mMoviePosterImageView);
         ViewOutlineProvider mProvider = new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
@@ -76,6 +78,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         public final TextView mMovieRatingTextView;
         public final ImageView mMoviePosterImageView;
         public final FrameLayout mMovieItemFrameLayout;
+        public final TextView mMovieDateTextView;
 
         public MovieAdapterViewHolder(View itemView) {
             super(itemView);
@@ -83,6 +86,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
             mMovieRatingTextView = (TextView)itemView.findViewById(R.id.tv_movie_rating);
             mMoviePosterImageView = (ImageView)itemView.findViewById(R.id.iv_movie_poster);
             mMovieItemFrameLayout = (FrameLayout)itemView.findViewById(R.id.layout_of_movie_item) ;
+            mMovieDateTextView = (TextView)itemView.findViewById(R.id.tv_movie_date) ;
             itemView.setOnClickListener(this);
         }
 

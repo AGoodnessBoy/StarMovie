@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R
+                .layout.activity_main);
         mLoadingIndicator =(ProgressBar)findViewById(R.id.pb_loading_indicator);
         mErrorMessageDisplay=(TextView)findViewById(R.id.tv_error_message_display);
         mRecyclerView=(RecyclerView)findViewById(R.id.rv_movie_list);
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
         startActivity(showMovieDetail);
 
     }
-
     public class FetchMovieTask extends AsyncTask<String,Void,NewMovieEntity[]>{
         @Override
         protected NewMovieEntity[] doInBackground(String... params) {
@@ -144,5 +144,6 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
                 showErrorMessage();
             }
         }
+
     }
 }

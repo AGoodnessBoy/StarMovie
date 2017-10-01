@@ -2,12 +2,14 @@ package com.moming.jml.starmovie;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Outline;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -71,6 +73,16 @@ public class MovieDetailActivity extends AppCompatActivity {
                 searchMovie(mMovieNameTextView.getText().toString());
             }
         });
+
+        ViewOutlineProvider mProvider = new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                view.setClipToOutline(true);
+                outline.setRoundRect(16,16,view.getWidth(),view.getHeight(),10);
+            }
+        };
+        mMovieDetailFrameLayout.setOutlineProvider(mProvider);
+
     }
 
     private void searchMovie(String name){
@@ -132,7 +144,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             if (movieEntity!=null){
                 showMovieDetail();
-                //显示错误信息
                 String img_base_url="http://image.tmdb.org/t/p/w300/";
                 String movie_img_url=img_base_url+movieEntity.getImg_path();
                 mMovieNameTextView.setText(movieEntity.getTitle());
@@ -168,7 +179,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
                 mMovieTypeTextView.setText(movieType);
                 // mMovieCastsTextView.setText(movieEntity.getCompany());
-                Picasso.with(MovieDetailActivity.this).load(movie_img_url).into(mMoviePosterImageView);
+                Picasso.with(MovieDetailActivity.this).load(movie_img_url).error(R.drawable.default_img)
+                .into(mMoviePosterImageView);
 
             }else {
                 showErrorMsg();
