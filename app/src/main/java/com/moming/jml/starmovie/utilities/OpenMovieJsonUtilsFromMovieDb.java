@@ -1,9 +1,11 @@
 package com.moming.jml.starmovie.utilities;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.moming.jml.starmovie.data.MovieContract;
 import com.moming.jml.starmovie.entities.NewMovieEntity;
 
 import org.json.JSONArray;
@@ -79,6 +81,41 @@ public final class OpenMovieJsonUtilsFromMovieDb {
     final static String MOVIE_RUNTIME="runtime";//电影时长
     final static String MOVIE_REVENUE="revenue";//票房
     final static String MOVIE_POSTER_PATH="poster_path";//电影海报
+
+    final static int MOVIE_POP = 1;
+    final static int MOVIE_TOP = 2;
+
+
+
+    public static ContentValues[] getMovieContentValueFromJson(Context context,String movieJsonStr,int type)
+    throws JSONException{
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+
+        //导入数据
+
+        ContentValues[] movieCVs = new ContentValues[10];
+
+        for (int i=0 ; i<10 ;i++) {
+
+            ContentValues movieValues = new ContentValues();
+            switch (type) {
+                case MOVIE_POP:
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POP, 1);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TOP, 0);
+                    break;
+                case MOVIE_TOP:
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POP, 0);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TOP, 1);
+                    break;
+                default:
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POP, 0);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TOP, 0);
+            }
+            movieCVs[i]=movieValues;
+        }
+
+        return movieCVs;
+    }
 
     public static NewMovieEntity[] getMovieListFromMovieDb(Context context,String callBackJson)
         throws JSONException{

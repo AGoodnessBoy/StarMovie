@@ -55,6 +55,13 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_TRAILER = "trailer";//预告
 
         public static final String COLUMN_MOVIE_COMMEMT = "comment"; //评论
+
+        public static final String COLUMN_USER_COLLECTION = "collection"; //收藏标记
+
+        public static final String COLUMN_MOVIE_POP = "pop"; //热门标记
+
+        public static final String COLUMN_MOVIE_TOP = "top"; //评分标记
+
     }
 
 }

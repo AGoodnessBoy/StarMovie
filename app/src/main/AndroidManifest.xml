@@ -21,6 +21,15 @@
         <activity android:name=".MovieDetailActivity"
             android:parentActivityName=".MainActivity">
         </activity>
+        <service android:name=".sync.MovieSyncIntentService"
+            android:exported="false">
+
+        </service>
+        <provider
+            android:authorities="com.moming.jml.starmovie"
+            android:name="com.moming.jml.starmovie.data.MovieProvider"
+            android:exported="false"></provider>
     </application>
+
 
 </manifest>

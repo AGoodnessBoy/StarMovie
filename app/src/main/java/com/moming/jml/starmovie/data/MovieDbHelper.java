@@ -28,25 +28,31 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID+
                         " INTEGER NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_TITLE+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_POSTER+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_STATUS+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_TYPE+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_REVENUE+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_TRAILER+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_COMMEMT+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_RUNTIME+
-                        " REAL NOT NULL, "+
+                        " TEXT NOT NULL, "+
+                        MovieContract.MovieEntry.COLUMN_MOVIE_POP+
+                        " INTEGER, "+
+                        MovieContract.MovieEntry.COLUMN_MOVIE_TOP+
+                        " INTEGER, "+
+                        MovieContract.MovieEntry.COLUMN_USER_COLLECTION+
+                        " INTEGER, "+
                         " UNIQUE ("+ MovieContract.MovieEntry.COLUMN_MOVIE_ID+
                         ") ON CONFLICT REPLACE);";
 

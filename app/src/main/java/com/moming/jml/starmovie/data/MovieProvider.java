@@ -1,5 +1,6 @@
 package com.moming.jml.starmovie.data;
 
+import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -129,22 +130,55 @@ public class MovieProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+
+        throw new RuntimeException("We are not implementing getType in StarMovie.");
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+
+        throw new RuntimeException(
+                "We are not implementing insert in StarMovie. Use bulkInsert instead");
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+
+        int numRowsDeleted;
+
+        if (null == selection) selection = "1";
+
+        switch (sUriMatcher.match(uri)){
+
+            case CODE_MOVIE:
+                numRowsDeleted =mOpenHelper.getWritableDatabase().delete(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+
+        }
+        if (numRowsDeleted !=0 ){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+
         return 0;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        throw new RuntimeException("We are not implementing update in StarMovie");
+    }
+
+    @Override
+    @TargetApi(11)
+    public void shutdown() {
+        mOpenHelper.close();
+        super.shutdown();
     }
 }
