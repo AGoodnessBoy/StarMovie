@@ -22,7 +22,7 @@ public final class NetworkUtils {
     public static final String MOVIE_SUBJECT_URL=MOVIE_API+"subject/";//单个条目检索
 
     //the movie db api URL
-    public static final String THE_MOVIE_DB_API_KEY="";
+    public static final String THE_MOVIE_DB_API_KEY="5ff6126cef0585783e7849804fc8a188";
     public static final String THE_MOVIE_DB_API="https://api.themoviedb.org/3/movie/";
     public static final String MOVIE_POP_URL=THE_MOVIE_DB_API+"popular";
     public static final String MOVIE_RATE_URL=THE_MOVIE_DB_API+"top_rated";

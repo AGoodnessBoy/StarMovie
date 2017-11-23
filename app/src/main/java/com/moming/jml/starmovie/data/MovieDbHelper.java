@@ -47,6 +47,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_RUNTIME+
                         " TEXT NOT NULL, "+
+                        MovieContract.MovieEntry.COLUMN_MOVIE_VOTE+
+                        " TEXT NOT NULL, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_POP+
                         " INTEGER, "+
                         MovieContract.MovieEntry.COLUMN_MOVIE_TOP+

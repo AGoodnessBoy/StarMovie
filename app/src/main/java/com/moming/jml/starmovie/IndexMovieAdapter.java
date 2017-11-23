@@ -1,6 +1,7 @@
 package com.moming.jml.starmovie;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Outline;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,37 +23,44 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
 
     private NewMovieEntity[] mMovieData;
 
+    private final Context mContext;
+
+    private Cursor mCursor;
+
     private final IndexMovieAdapterOnClickHandler mClickHandler;
 
     public interface IndexMovieAdapterOnClickHandler{
         void onClick(String movieId);
     }
 
-    public IndexMovieAdapter(IndexMovieAdapterOnClickHandler clickHandler){
+    public IndexMovieAdapter(Context context,IndexMovieAdapterOnClickHandler clickHandler){
         mClickHandler=clickHandler;
+        mContext = context;
     }
 
 
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context =parent.getContext();
+
         int layoutIdForListItem = R.layout.movie_list_item;
-        LayoutInflater inflater =LayoutInflater.from(context);
+        LayoutInflater inflater =LayoutInflater.from(mContext);
         boolean shouldAttachToPartentImmediately = false;
 
         View view  = inflater.inflate(layoutIdForListItem,parent,shouldAttachToPartentImmediately);
+        view.setFocusable(true);
 
         return new MovieAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
+        mCursor.moveToPosition(position);
         Context context =holder.itemView.getContext();
         String img_base_url="http://image.tmdb.org/t/p/w300/";
-        holder.mMovieNameTextView.setText(mMovieData[position].getTitle());
-        holder.mMovieRatingTextView.setText(mMovieData[position].getVote());
-        holder.mMovieDateTextView.setText(mMovieData[position].getRelease_date());
-        String movie_img_url=img_base_url+mMovieData[position].getPoster_path();
+        holder.mMovieNameTextView.setText(mCursor.getString(MainActivity.INDEX_MOVIE_TITLE));
+        holder.mMovieRatingTextView.setText(mCursor.getString(MainActivity.INDEX_MOVIE_VOTE));
+        holder.mMovieDateTextView.setText(mCursor.getString(MainActivity.INDEX_MOVIE_RELEASE));
+        String movie_img_url=img_base_url+mCursor.getString(MainActivity.INDEX_MOVIE_POSTER);
         Picasso.with(context).load(movie_img_url)
                 .error(R.drawable.default_img).into(holder.mMoviePosterImageView);
         ViewOutlineProvider mProvider = new ViewOutlineProvider() {
@@ -69,8 +77,13 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
 
     @Override
     public int getItemCount() {
-        if(null == mMovieData) return 0;
-        return mMovieData.length;
+        if(null == mCursor) return 0;
+        return mCursor.getCount();
+    }
+
+    void swapCursor(Cursor newCursor){
+        mCursor = newCursor;
+        notifyDataSetChanged();
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -93,7 +106,8 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         @Override
         public void onClick(View v) {
             int adapterPosition =getAdapterPosition();
-            String movieId = mMovieData[adapterPosition].getId();
+            mCursor.moveToPosition(adapterPosition);
+            String movieId = mCursor.getString(MainActivity.INDEX_MOVIE_ID);
             mClickHandler.onClick(movieId);
         }
     }

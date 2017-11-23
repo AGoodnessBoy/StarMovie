@@ -2,8 +2,13 @@ package com.moming.jml.starmovie;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -13,20 +18,40 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.moming.jml.starmovie.entities.NewMovieEntity;
-import com.moming.jml.starmovie.utilities.NetworkUtils;
-import com.moming.jml.starmovie.utilities.OpenMovieJsonUtilsFromMovieDb;
+import com.moming.jml.starmovie.data.MovieContract;
 
-import java.net.URL;
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, IndexMovieAdapter.IndexMovieAdapterOnClickHandler{
 
-public class MainActivity extends AppCompatActivity implements IndexMovieAdapter.IndexMovieAdapterOnClickHandler{
+
+    private final String TAG = MainActivity.class.getSimpleName();
+    private static final int ID_MOVIE_LOADER = 32;
 
     final static String SORT_BY_POP ="1";
     final static String SORT_BY_TOP ="2";
     final static String SORT_DEFAULT="0";
+    final static String SORT_KET = "sortBy";
+
+    public static final String[] MAIN_MOVIE_PROJECTION ={
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_POSTER,
+            MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE,
+            MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.MovieEntry.COLUMN_MOVIE_VOTE
+    };
+
+    public static final int INDEX_MOVIE_ID=0;
+    public static final int INDEX_MOVIE_POSTER=1;
+    public static final int INDEX_MOVIE_RELEASE=2;
+    public static final int INDEX_MOVIE_TITLE=3;
+    public static final int INDEX_MOVIE_VOTE=4;
+
+
+
+
 
     private RecyclerView mRecyclerView;
     private IndexMovieAdapter theMovieAdaper;
+    private int mPosition = RecyclerView.NO_POSITION;
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
@@ -44,25 +69,26 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
                 new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        theMovieAdaper= new IndexMovieAdapter(this);
+        theMovieAdaper= new IndexMovieAdapter(this,this);
         mRecyclerView.setAdapter(theMovieAdaper);
-        loadMovieData(SORT_DEFAULT);
+        showLoading();
+        //loadMovieData(SORT_DEFAULT);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(SORT_KET,SORT_DEFAULT);
+        getSupportLoaderManager().initLoader(ID_MOVIE_LOADER,bundle,this);
+
     }
 
-    private void loadMovieData(String sortBy){
-        showMovieData();
-        FetchMovieTask movieTask = new FetchMovieTask();
-        movieTask.execute(sortBy);
 
-    }
     private void showMovieData(){
-        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
 
     }
-    private void showErrorMessage(){
+    private void showLoading(){
         mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
 
     }
 
@@ -75,12 +101,21 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int theSelectedItemId=item.getItemId();
+        Bundle bundle = new Bundle();
         switch (theSelectedItemId){
             case R.id.action_sort_by_popular:
-                loadMovieData(SORT_BY_POP);
+                bundle.putString(SORT_KET,SORT_BY_POP);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,this
+                );
+                bundle.clear();
                 break;
             case R.id.action_sort_by_rating:
-                loadMovieData(SORT_BY_TOP);
+                bundle.putString(SORT_KET,SORT_BY_TOP);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,this
+                );
+                bundle.clear();
                 break;
             default:
 
@@ -98,52 +133,60 @@ public class MainActivity extends AppCompatActivity implements IndexMovieAdapter
         startActivity(showMovieDetail);
 
     }
-    public class FetchMovieTask extends AsyncTask<String,Void,NewMovieEntity[]>{
-        @Override
-        protected NewMovieEntity[] doInBackground(String... params) {
-            String sortBy = params[0];
-            URL finalUrl=null;
 
-            switch (sortBy){
-                case SORT_BY_POP:
-                    finalUrl=NetworkUtils.buildMoviePopUrlFromMovieDb();
-                    break;
-                case SORT_BY_TOP:
-                    finalUrl=NetworkUtils.buildMovieTopUrlFromMovieDb();
-                    break;
-                default:
-                    finalUrl=NetworkUtils.buildMoviePopUrlFromMovieDb();
-            }
-            try{
-                String jsonMovieResponse = NetworkUtils
-                        .getResponseFromHttpUrl(finalUrl);
-                NewMovieEntity[] movieDbData= OpenMovieJsonUtilsFromMovieDb
-                        .getMovieListFromMovieDb(MainActivity.this,jsonMovieResponse);
-                //MovieEntity[] simpleData= OpenMovieJsonUtils.getMovieListFromJson(MainActivity.this,jsonMovieResponse);
-                return movieDbData;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+    private String searchSelection(String args){
+        switch (args){
+            case SORT_BY_POP:
+                return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
+            case SORT_BY_TOP:
+                return MovieContract.MovieEntry.COLUMN_MOVIE_TOP+" = 1";
+            case SORT_DEFAULT:
+                return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
+            default:
+                return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 
-        @Override
-        protected void onPostExecute(NewMovieEntity[] movieEntities) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (movieEntities!=null){
-                showMovieData();
-                theMovieAdaper.setMovieData(movieEntities);
-            }else {
-                showErrorMessage();
-            }
+
+        switch (id){
+            case ID_MOVIE_LOADER:
+                Uri mainMovieQueryUri =
+                        MovieContract.MovieEntry.CONTENT_URI;
+
+                String selection =searchSelection(args.getString(SORT_KET));
+
+                String sortOrder =
+                        MovieContract.MovieEntry.COLUMN_MOVIE_VOTE +" ASC";
+
+                return new CursorLoader(this,mainMovieQueryUri,
+                        MAIN_MOVIE_PROJECTION,selection,null,sortOrder);
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+
+
+
         }
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        theMovieAdaper.swapCursor(data);
+
+        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+        mRecyclerView.smoothScrollToPosition(mPosition);
+        if (data.getCount()!=0 ) showMovieData();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        theMovieAdaper.swapCursor(null);
 
     }
 }

@@ -56,6 +56,10 @@ public class MovieContract {
 
         public static final String COLUMN_MOVIE_COMMEMT = "comment"; //评论
 
+        public static final String COLUMN_MOVIE_VOTE = "vote"; //评分
+
+
+
         public static final String COLUMN_USER_COLLECTION = "collection"; //收藏标记
 
         public static final String COLUMN_MOVIE_POP = "pop"; //热门标记
