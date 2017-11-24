@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -12,13 +11,14 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.moming.jml.starmovie.data.MovieContract;
+import com.moming.jml.starmovie.sync.MovieSyncUtils;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, IndexMovieAdapter.IndexMovieAdapterOnClickHandler{
 
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     final static String SORT_BY_TOP ="2";
     final static String SORT_DEFAULT="0";
     final static String SORT_KET = "sortBy";
+    final static String USER_COLLECTION="user_collection";
 
     public static final String[] MAIN_MOVIE_PROJECTION ={
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private RecyclerView mRecyclerView;
     private IndexMovieAdapter theMovieAdaper;
     private int mPosition = RecyclerView.NO_POSITION;
-    private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R
                 .layout.activity_main);
         mLoadingIndicator =(ProgressBar)findViewById(R.id.pb_loading_indicator);
-        mErrorMessageDisplay=(TextView)findViewById(R.id.tv_error_message_display);
+
         mRecyclerView=(RecyclerView)findViewById(R.id.rv_movie_list);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Bundle bundle = new Bundle();
         bundle.putString(SORT_KET,SORT_DEFAULT);
         getSupportLoaderManager().initLoader(ID_MOVIE_LOADER,bundle,this);
+        Log.v(TAG,"initialize start");
+        MovieSyncUtils.initialize(this);
+        Log.v(TAG,"initialize end");
 
     }
 
@@ -117,6 +120,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 );
                 bundle.clear();
                 break;
+            case R.id.action_user_collection:
+                bundle.putString(SORT_KET,USER_COLLECTION);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,this
+                );
+                bundle.clear();
             default:
 
                 break;
@@ -142,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 return MovieContract.MovieEntry.COLUMN_MOVIE_TOP+" = 1";
             case SORT_DEFAULT:
                 return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
+            case USER_COLLECTION:
+                return MovieContract.MovieEntry.COLUMN_USER_COLLECTION+" = 1";
             default:
                 return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
         }

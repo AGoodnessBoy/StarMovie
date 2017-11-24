@@ -1,11 +1,13 @@
 package com.moming.jml.starmovie;
 
-import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Outline;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,32 +17,47 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.moming.jml.starmovie.entities.NewMovieEntity;
-import com.moming.jml.starmovie.utilities.NetworkUtils;
-import com.moming.jml.starmovie.utilities.OpenMovieJsonUtilsFromMovieDb;
+import com.moming.jml.starmovie.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URL;
-
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>{
 
     private TextView mMovieNameTextView;
-    private TextView mMovieRatingTextView;
     private TextView mMovieSummaryTextView;
     private ImageView mMoviePosterImageView;
-    private TextView mMovieStatusTextView;
-    private TextView mMovieRevenuetTextView;
     private TextView mMovieRuntimeTextView;
-    private TextView mMovieTypeTextView;
     private TextView mMoreMessageTextView;
     private TextView mMovieDateTextView;
     private TextView mErrorMsgTextView;
     private FrameLayout mMovieDetailFrameLayout;
     private ProgressBar mMovieLoadBar;
+
+    private Cursor mCursor;
+
+    private static final int ID_DETAIL_LOADER = 109;
+
+    public static final String[] MOVIE_DETAIL_PROJECTION = {
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID, //id
+            MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE, //大图
+            MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW,//介绍
+            MovieContract.MovieEntry.COLUMN_MOVIE_COMMEMT, //评论
+            MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE,//时间
+            MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,//标题
+            MovieContract.MovieEntry.COLUMN_MOVIE_RUNTIME,//运行时间
+            MovieContract.MovieEntry.COLUMN_MOVIE_TRAILER//预告
+    };
+    public static final int INDEX_MOVIE_ID = 0;
+    public static final int INDEX_MOVIE_IMAGE =1;
+    public static final int INDEX_MOVIE_OVERVIEW =2;
+    public static final int INDEX_MOVIE_COMMEMT =3;
+    public static final int INDEX_MOVIE_RELEASE =4;
+    public static final int INDEX_MOVIE_TITLE =5;
+    public static final int INDEX_MOVIE_RUNTIME =6;
+    public static final int INDEX_MOVIE_TRAILER =7;
+
+    private Uri mUri;
+
 
 
     @Override
@@ -49,12 +66,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         mMovieNameTextView=(TextView)findViewById(R.id.tv_movie_name_in_detail);
         mMoviePosterImageView=(ImageView)findViewById(R.id.iv_movie_banner) ;
-        mMovieRatingTextView=(TextView)findViewById(R.id.tv_movie_rating_in_detail);
+
         mMovieSummaryTextView=(TextView)findViewById(R.id.tv_movie_summary_in_detail);
-        mMovieStatusTextView=(TextView)findViewById(R.id.tv_movie_status_in_detail);
-        mMovieRevenuetTextView=(TextView)findViewById(R.id.tv_movie_revenue_in_detail);
+
+
         mMovieRuntimeTextView=(TextView)findViewById(R.id.tv_movie_runtime_in_detail);
-        mMovieTypeTextView=(TextView)findViewById(R.id.tv_movie_type_in_detail);
+
         mMoreMessageTextView=(TextView)findViewById(R.id.tv_more_message);
         mMovieDateTextView=(TextView)findViewById(R.id.tv_movie_date_in_detail);
         mErrorMsgTextView = (TextView)findViewById(R.id.tv_error_message_in_detail) ;
@@ -64,9 +81,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         Intent intent =getIntent();
         String sMovieId =intent.getStringExtra("movie_id");
+        mUri = MovieContract.MovieEntry.buildMovieUriWithId(sMovieId);
+        if (mUri == null) throw new NullPointerException("URI for MovieDetailActivity cannot be null");;
+        getSupportLoaderManager().initLoader(ID_DETAIL_LOADER,null,this);
+
         Log.v("id-intent",sMovieId);
-        FetchMovieDetailTask fetchMovieDetailTask = new FetchMovieDetailTask();
-        fetchMovieDetailTask.execute(sMovieId);
         mMoreMessageTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,87 +126,44 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     }
 
-
-    public class FetchMovieDetailTask extends AsyncTask<String,Void,NewMovieEntity>{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mMovieDetailFrameLayout.setVisibility(View.INVISIBLE);
-            mMovieLoadBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected NewMovieEntity doInBackground(String... params) {
-
-            if (params==null){
-                return null;
-            }
-            String movieId = params[0];
-            Context context =MovieDetailActivity.this;
-
-            URL url = NetworkUtils.buildMovieItemUrlFromMovieDbById(movieId);
-            try {
-                String movieItemJsonReponse = NetworkUtils.getResponseFromHttpUrl(url);
-                NewMovieEntity movieEntity = OpenMovieJsonUtilsFromMovieDb
-                        .getMovieItemFromMovieDb(context,movieItemJsonReponse);
-                return movieEntity;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(NewMovieEntity movieEntity) {
-            mMovieLoadBar.setVisibility(View.INVISIBLE);
-
-            if (movieEntity!=null){
-                showMovieDetail();
-                String img_base_url="http://image.tmdb.org/t/p/w300/";
-                String movie_img_url=img_base_url+movieEntity.getImg_path();
-                mMovieNameTextView.setText(movieEntity.getTitle());
-                if (movieEntity.getOverview()!="null"){
-                    mMovieSummaryTextView.setText(movieEntity.getOverview());}
-                else {
-                    mMovieSummaryTextView.setText("暂无数据");
-                }
-                mMovieRatingTextView.setText(movieEntity.getVote());
-                mMovieRevenuetTextView.setText("$ "+movieEntity.getRevenue());
-                if (movieEntity.getRuntime().endsWith("null")||movieEntity.getRuntime().endsWith("0")){
-                    mMovieRuntimeTextView.setText("暂无数据");
-
-                }else {
-                    mMovieRuntimeTextView.setText(movieEntity.getRuntime()+" 分钟");
-                }
-                mMovieStatusTextView.setText(movieEntity.getStatus());
-                if (movieEntity.getRelease_date()!="null"){
-                    mMovieDateTextView.setText(movieEntity.getRelease_date());
-                }else {
-                    mMovieDateTextView.setText("暂无数据");
-                }
-
-                String movieType = "";
-                JSONArray array = movieEntity.getType();
-                for (int i=0;i<array.length();i++){
-                    try {
-                        JSONObject type = array.getJSONObject(i);
-                        movieType=movieType+type.getString("name")+" ";
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
-                mMovieTypeTextView.setText(movieType);
-                // mMovieCastsTextView.setText(movieEntity.getCompany());
-                Picasso.with(MovieDetailActivity.this).load(movie_img_url).error(R.drawable.default_img)
-                .into(mMoviePosterImageView);
-
-            }else {
-                showErrorMsg();
-            }
-
-
-
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id){
+            case ID_DETAIL_LOADER:
+                return new CursorLoader(this,
+                        mUri,MOVIE_DETAIL_PROJECTION,null,null,null);
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
         }
     }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        boolean cursorHasValidData = false;
+        if (data != null && data.moveToFirst()) {
+            /* We have valid data, continue on to bind the data to the UI */
+            cursorHasValidData = true;
+        }
+
+        if (!cursorHasValidData) {
+            /* No data to display, simply return and do nothing */
+            return;
+        }
+
+        mMovieNameTextView.setText(data.getString(INDEX_MOVIE_TITLE));
+        String img_base_url="http://image.tmdb.org/t/p/w300/";
+        String movie_img_url=img_base_url+data.getString(INDEX_MOVIE_IMAGE);
+        Picasso.with(MovieDetailActivity.this).load(movie_img_url).error(R.drawable.default_img)
+                .into(mMoviePosterImageView);
+        mMovieDateTextView.setText(data.getString(INDEX_MOVIE_RELEASE));
+        mMovieRuntimeTextView.setText(data.getString(INDEX_MOVIE_RUNTIME));
+        mMovieSummaryTextView.setText(data.getString(INDEX_MOVIE_OVERVIEW));
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
 }

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by admin on 2017/11/20.
@@ -49,6 +50,7 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        Log.v("bulkInsert","start");
 
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
@@ -58,12 +60,14 @@ public class MovieProvider extends ContentProvider {
                 int rowsInserted = 0;
                 try {
                     for (ContentValues value : values){
+
                         long _id =
                                 db.insert(
                                         MovieContract.MovieEntry.TABLE_NAME,
                                         null,
                                         value
                                 );
+                        Log.v("bulkInsert",Long.toString(_id));
                         if (_id != -1){
                             rowsInserted++;
                         }
@@ -76,13 +80,15 @@ public class MovieProvider extends ContentProvider {
                 if (rowsInserted > 0){
                     getContext().getContentResolver().notifyChange(uri,null);
                 }
-
+                Log.v("bulkInsert","end");
                 return rowsInserted;
 
             default:
                 return super.bulkInsert(uri,values);
 
+
         }
+
     }
 
     @Nullable

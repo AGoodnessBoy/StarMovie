@@ -6,11 +6,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.moming.jml.starmovie.data.MovieContract;
-import com.moming.jml.starmovie.entities.NewMovieEntity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by admin on 2017/9/28.
@@ -90,14 +92,79 @@ public final class OpenMovieJsonUtilsFromMovieDb {
     public static ContentValues[] getMovieContentValueFromJson(Context context,String movieJsonStr,int type)
     throws JSONException{
         JSONObject movieJson = new JSONObject(movieJsonStr);
+        if (movieJson.has("status_code")){
+            int errorCode = movieJson.getInt("status_code");
+            String errorMsg = movieJson.getString("status_message");
+            if (errorCode==34||errorCode==7){
+                Toast.makeText(context,errorMsg,
+                        Toast.LENGTH_LONG).show();
+                return null;
+            }
+        }
+        Log.v("json",movieJson.toString());
+
+        JSONArray movieArray= movieJson.getJSONArray("results");
 
         //导入数据
 
-        ContentValues[] movieCVs = new ContentValues[10];
+        ContentValues[] movieCVs = new ContentValues[movieArray.length()];
 
-        for (int i=0 ; i<10 ;i++) {
+        for (int i=0 ; i<movieArray.length() ;i++) {
 
             ContentValues movieValues = new ContentValues();
+            JSONObject movieTempObj = movieArray.getJSONObject(i);
+
+            String movie_id = movieTempObj.getString(MOVIE_ID);
+            String movie_post = movieTempObj.getString(MOVIE_POSTER_PATH);
+            String movie_vote = movieTempObj.getString(MOVIE_VOTE);
+            String movie_title = movieTempObj.getString(MOVIE_TITLE);
+            String movie_img = movieTempObj.getString(MOVIE_IMG_PATH);
+            String movie_release = movieTempObj.getString(MOVIE_RELEASE_DATE);
+
+            String movie_video = getMovieVideoJsonFromMD(movie_id);
+            String movie_reviews =getMovieReviewsJsonFromMD(movie_id);
+            String movie_item = getMovieItemJsonFromMD(movie_id);
+
+            String movie_overview = "";
+            String movie_runtime = "";
+
+            try{
+                JSONObject movieItemJson = new JSONObject(movie_item);
+
+                if (movieItemJson.has("status_code")){
+                    int errorCode = movieItemJson.getInt("status_code");
+                    String errorMsg = movieItemJson.getString("status_message");
+                    if (errorCode==34||errorCode==7){
+                        Toast.makeText(context,errorMsg,
+                                Toast.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                movie_overview = movieItemJson.getString(MOVIE_OVERVIEW);
+                movie_runtime = movieItemJson.getString(MOVIE_RUNTIME);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RUNTIME,movie_runtime);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW,movie_overview);
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+
+
+
+
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,movie_id);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE,movie_img);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER,movie_post);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,movie_title);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE,movie_release);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE,movie_vote);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TRAILER,movie_video);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_COMMEMT,movie_reviews);
+
+
+
             switch (type) {
                 case MOVIE_POP:
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POP, 1);
@@ -111,85 +178,55 @@ public final class OpenMovieJsonUtilsFromMovieDb {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POP, 0);
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TOP, 0);
             }
+
+            Log.v("getMovieContentValueFro",movie_id);
+
+
             movieCVs[i]=movieValues;
+
         }
 
         return movieCVs;
     }
 
-    public static NewMovieEntity[] getMovieListFromMovieDb(Context context,String callBackJson)
-        throws JSONException{
-
-            NewMovieEntity[] movielist = null;
-
-        JSONObject movieJsonObj = new JSONObject(callBackJson);
-        if (movieJsonObj.has("status_code")){
-            int errorCode = movieJsonObj.getInt("status_code");
-            String errorMsg = movieJsonObj.getString("status_message");
-            if (errorCode==34||errorCode==7){
-                Toast.makeText(context,errorMsg,
-                        Toast.LENGTH_LONG).show();
-                return null;
-            }
+    public static String getMovieVideoJsonFromMD(String id){
+        try {
+            URL videoUrl = NetworkUtils.buildMovieVideoUrlFromMovieDbById(id);
+            String videoReq = NetworkUtils.getResponseFromHttpUrl(videoUrl);
+           return videoReq;
+        }catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-        Log.v("json",callBackJson);
-        JSONArray movieArray= movieJsonObj.getJSONArray("results");
 
-        int movienumber= movieArray.length();
-        movielist = new  NewMovieEntity[movienumber];
-        for (int i=0;i<movienumber;i++){
-            NewMovieEntity movieTemp = new NewMovieEntity();
-            JSONObject movieTempObj = movieArray.getJSONObject(i);
-            movieTemp.setId(movieTempObj.getString(MOVIE_ID));
-            if (movieTempObj.getString(MOVIE_POSTER_PATH)==null){
-                movieTemp.setPoster_path(movieTempObj.getString(MOVIE_IMG_PATH));
-            }else {
-                movieTemp.setPoster_path(movieTempObj.getString(MOVIE_POSTER_PATH));
-            }
-
-            movieTemp.setTitle(movieTempObj.getString(MOVIE_TITLE));
-            movieTemp.setVote(movieTempObj.getString(MOVIE_VOTE));
-            movieTemp.setRelease_date(movieTempObj.getString(MOVIE_RELEASE_DATE));
-            movielist[i]=movieTemp;
-        }
-        return movielist;
     }
 
-    public static NewMovieEntity getMovieItemFromMovieDb(Context context,String callbackJson)
-        throws JSONException{
-        NewMovieEntity movieEntity = new NewMovieEntity();
-
-        JSONObject movieItemObj = new JSONObject(callbackJson);
-        if (movieItemObj.has("status_code")){
-            int errorCode = movieItemObj.getInt("status_code");
-            String errorMsg = movieItemObj.getString("status_message");
-            if (errorCode==34||errorCode==7){
-                Toast.makeText(context,errorMsg,
-                        Toast.LENGTH_LONG).show();
-                return null;
-            }
+    public static String getMovieReviewsJsonFromMD(String id){
+        try {
+            URL reviewsUrl = NetworkUtils.buildMovieReviewsUrlFromMovieDbById(id);
+            String reviewsReq = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
+            return reviewsReq;
+        }catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        movieEntity.setId(movieItemObj.getString(MOVIE_ID));
-        movieEntity.setTitle(movieItemObj.getString(MOVIE_TITLE));
-        movieEntity.setImg_path(movieItemObj.getString(MOVIE_IMG_PATH));
-        if (movieItemObj.getString(MOVIE_POSTER_PATH)==null){
-            movieEntity.setPoster_path(movieItemObj.getString(MOVIE_IMG_PATH));
-        }else {
-            movieEntity.setPoster_path(movieItemObj.getString(MOVIE_POSTER_PATH));
-        }
-        movieEntity.setVote(movieItemObj.getString(MOVIE_VOTE));
-        movieEntity.setType(movieItemObj.getJSONArray(MOVIE_TYPE));
-        movieEntity.setCompany(movieItemObj.getJSONArray(MOVIE_COMPANY));
-        movieEntity.setOverview(movieItemObj.getString(MOVIE_OVERVIEW));
-        movieEntity.setStatus(movieItemObj.getString(MOVIE_STATUS));
-        movieEntity.setRuntime(movieItemObj.getString(MOVIE_RUNTIME));
-        movieEntity.setRevenue(movieItemObj.getString(MOVIE_REVENUE));
-        movieEntity.setRelease_date(movieItemObj.getString(MOVIE_RELEASE_DATE));
-
-        return movieEntity;
 
     }
+
+    public static String getMovieItemJsonFromMD(String id){
+        try {
+            URL itemUrl = NetworkUtils.buildMovieItemUrlFromMovieDbById(id);
+            String itemReq = NetworkUtils.getResponseFromHttpUrl(itemUrl);
+            return itemReq;
+        }catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+
+
 
 
 

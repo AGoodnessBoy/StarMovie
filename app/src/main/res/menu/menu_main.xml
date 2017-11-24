@@ -6,5 +6,8 @@
     <item
         android:id="@+id/action_sort_by_rating"
         android:title="@string/rating_sort"/>
+    <item
+        android:id="@+id/action_user_collection"
+        android:title="@string/user_collection"/>
 
 </menu>

@@ -25,6 +25,10 @@
             android:exported="false">
 
         </service>
+        <service android:name=".sync.MovieFirebaseJobService"
+            android:exported="false">
+
+        </service>
         <provider
             android:authorities="com.moming.jml.starmovie"
             android:name="com.moming.jml.starmovie.data.MovieProvider"

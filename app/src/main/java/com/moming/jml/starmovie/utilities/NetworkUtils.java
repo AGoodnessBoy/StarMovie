@@ -42,7 +42,7 @@ public final class NetworkUtils {
         Uri buildUri = Uri.parse(MOVIE_POP_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
                 .appendQueryParameter(LANG_PARAM,"zh")
-                .appendQueryParameter(PAGE_PARAM,"1")
+                .appendQueryParameter(PAGE_PARAM,"2")
                 .build();
         URL url = null;
         try{
@@ -58,7 +58,7 @@ public final class NetworkUtils {
         Uri buildUri = Uri.parse(MOVIE_RATE_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
                 .appendQueryParameter(LANG_PARAM,"zh")
-                .appendQueryParameter(PAGE_PARAM,"1")
+                .appendQueryParameter(PAGE_PARAM,"2")
                 .build();
         URL url = null;
         try{
@@ -68,6 +68,37 @@ public final class NetworkUtils {
         }
 
         return url;
+    }
+
+    public static URL buildMovieVideoUrlFromMovieDbById(String id){
+        String MOVIE_VIDEO_URL= THE_MOVIE_DB_API+id+"/videos";
+        Uri buildUri = Uri.parse(MOVIE_VIDEO_URL).buildUpon()
+                .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
+                .appendQueryParameter(LANG_PARAM,"zh")
+                .build();
+        URL url = null;
+        try {
+            url = new URL(buildUri.toString());
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        }
+        return  url;
+    }
+
+    public static URL buildMovieReviewsUrlFromMovieDbById(String id){
+        String MOVIE_REVIEW_URL= THE_MOVIE_DB_API+id+"/reviews";
+        Uri buildUri = Uri.parse(MOVIE_REVIEW_URL).buildUpon()
+                .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
+                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(PAGE_PARAM,"1")
+                .build();
+        URL url = null;
+        try {
+            url = new URL(buildUri.toString());
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        }
+        return  url;
     }
 
     public static URL buildMovieItemUrlFromMovieDbById(String id){

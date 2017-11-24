@@ -42,21 +42,25 @@ public class MovieContract {
 
         public static final String COLUMN_MOVIE_POSTER = "poster"; //海报图
 
-        public static final String COLUMN_MOVIE_TYPE = "type"; //类型 数组
+     //   public static final String COLUMN_MOVIE_TYPE = "type"; //类型 数组
 
-        public static final String COLUMN_MOVIE_STATUS = "status"; //状态
+     //   public static final String COLUMN_MOVIE_STATUS = "status"; //状态
 
         public static final String COLUMN_MOVIE_RELEASE = "release"; //发行日期
 
         public static final String COLUMN_MOVIE_RUNTIME = "runtime"; //时长
 
-        public static final String COLUMN_MOVIE_REVENUE = "revenue";//票房
+    //    public static final String COLUMN_MOVIE_REVENUE = "revenue";//票房
 
         public static final String COLUMN_MOVIE_TRAILER = "trailer";//预告
 
         public static final String COLUMN_MOVIE_COMMEMT = "comment"; //评论
 
         public static final String COLUMN_MOVIE_VOTE = "vote"; //评分
+
+        public static final String COLUMN_MOVIE_OVERVIEW = "overview"; //介绍
+
+
 
 
 
@@ -65,6 +69,12 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_POP = "pop"; //热门标记
 
         public static final String COLUMN_MOVIE_TOP = "top"; //评分标记
+
+        public static Uri buildMovieUriWithId(String id){
+            return CONTENT_URI.buildUpon()
+                    .appendPath(id)
+                    .build();
+        }
 
     }
 

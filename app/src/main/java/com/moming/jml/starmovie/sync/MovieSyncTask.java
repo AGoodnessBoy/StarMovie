@@ -1,9 +1,9 @@
 package com.moming.jml.starmovie.sync;
 
-import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 import com.moming.jml.starmovie.data.MovieContract;
 import com.moming.jml.starmovie.utilities.NetworkUtils;
@@ -27,6 +27,7 @@ public class MovieSyncTask {
                     NetworkUtils.buildMoviePopUrlFromMovieDb();
             String jsonMoviePop = NetworkUtils.
                     getResponseFromHttpUrl(moviePopRequestUrl);
+            Log.v("syncMovie",jsonMoviePop);
 
             ContentValues[] popValues = OpenMovieJsonUtilsFromMovieDb.getMovieContentValueFromJson(
                     context,jsonMoviePop,1
@@ -34,10 +35,6 @@ public class MovieSyncTask {
 
             if (popValues != null && popValues .length !=0){
                 ContentResolver movieResolver = context.getContentResolver();
-                movieResolver.delete(
-                        MovieContract.MovieEntry.CONTENT_URI,
-                        MovieContract.MovieEntry.COLUMN_MOVIE_POP+"=1 ",
-                        null);
                 movieResolver.bulkInsert(
                         MovieContract.MovieEntry.CONTENT_URI,popValues);
             }
@@ -52,17 +49,13 @@ public class MovieSyncTask {
                     NetworkUtils.buildMovieTopUrlFromMovieDb();
             String jsonMovieTop = NetworkUtils.
                     getResponseFromHttpUrl(movieTopRequestUrl);
-
+            Log.v("syncMovie",jsonMovieTop);
             ContentValues[] topValues = OpenMovieJsonUtilsFromMovieDb.getMovieContentValueFromJson(
                     context,jsonMovieTop,2
             );
 
             if (topValues != null && topValues .length !=0){
                 ContentResolver movieResolver = context.getContentResolver();
-                movieResolver.delete(
-                        MovieContract.MovieEntry.CONTENT_URI,
-                        MovieContract.MovieEntry.COLUMN_MOVIE_TOP+"=1 ",
-                        null);
                 movieResolver.bulkInsert(
                         MovieContract.MovieEntry.CONTENT_URI,topValues);
             }
