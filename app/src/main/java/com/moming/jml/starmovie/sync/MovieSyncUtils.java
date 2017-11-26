@@ -53,27 +53,21 @@ public class MovieSyncUtils {
 
         sInitialized =true;
         scheduleJobDispatcherSync(context);
-        Log.v("initialize","initialize step -1");
         Thread checkForEmpty = new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        Log.v("initialize","checkForEmpty start");
                         Uri uri = MovieContract.MovieEntry.CONTENT_URI;
-                        Log.v("initialize",uri.toString());
                         String[] projectionColumns ={MovieContract.MovieEntry._ID};
                         Cursor cursor = context.getContentResolver().query(
                                 uri,projectionColumns,null,null,null
                         );
 
-                        Log.v("initialize","cursor");
 
                         if (null == cursor || cursor.getCount() == 0){
                             startImmediateSync(context);
-                            Log.v("initialize","cursor");
                         }
                         cursor.close();
-                        Log.v("initialize","checkForEmpty end");
                     }
                 }
         );
@@ -83,9 +77,7 @@ public class MovieSyncUtils {
     }
 
     public static void startImmediateSync(@NonNull final Context context){
-        Log.v("startImmediateSync","intent-2");
         Intent intent = new Intent(context,MovieSyncIntentService.class);
         context.startService(intent);
-        Log.v("startImmediateSync","intent-2");
     }
 }

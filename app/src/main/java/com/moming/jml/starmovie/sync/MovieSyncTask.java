@@ -21,13 +21,13 @@ import java.net.URL;
 public class MovieSyncTask {
 
     synchronized public static void syncMovie(Context context){
+        Log.v("syncMovie","pop");
         //pop request
         try {
             URL moviePopRequestUrl =
                     NetworkUtils.buildMoviePopUrlFromMovieDb();
             String jsonMoviePop = NetworkUtils.
                     getResponseFromHttpUrl(moviePopRequestUrl);
-            Log.v("syncMovie",jsonMoviePop);
 
             ContentValues[] popValues = OpenMovieJsonUtilsFromMovieDb.getMovieContentValueFromJson(
                     context,jsonMoviePop,1
@@ -43,13 +43,14 @@ public class MovieSyncTask {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.v("syncMovie","top");
+
         //top request
         try {
             URL movieTopRequestUrl =
                     NetworkUtils.buildMovieTopUrlFromMovieDb();
             String jsonMovieTop = NetworkUtils.
                     getResponseFromHttpUrl(movieTopRequestUrl);
-            Log.v("syncMovie",jsonMovieTop);
             ContentValues[] topValues = OpenMovieJsonUtilsFromMovieDb.getMovieContentValueFromJson(
                     context,jsonMovieTop,2
             );
@@ -64,6 +65,7 @@ public class MovieSyncTask {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
 
 

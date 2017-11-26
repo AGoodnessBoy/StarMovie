@@ -50,8 +50,6 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        Log.v("bulkInsert","start");
-
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         switch (sUriMatcher.match(uri)){
@@ -67,7 +65,6 @@ public class MovieProvider extends ContentProvider {
                                         null,
                                         value
                                 );
-                        Log.v("bulkInsert",Long.toString(_id));
                         if (_id != -1){
                             rowsInserted++;
                         }
@@ -80,7 +77,6 @@ public class MovieProvider extends ContentProvider {
                 if (rowsInserted > 0){
                     getContext().getContentResolver().notifyChange(uri,null);
                 }
-                Log.v("bulkInsert","end");
                 return rowsInserted;
 
             default:
@@ -130,7 +126,7 @@ public class MovieProvider extends ContentProvider {
                 throw new UnsupportedOperationException();
 
         }
-        return null;
+        return cursor;
     }
 
     @Nullable
@@ -173,7 +169,7 @@ public class MovieProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri,null);
         }
 
-        return 0;
+        return numRowsDeleted;
     }
 
     @Override

@@ -42,7 +42,7 @@ public final class NetworkUtils {
         Uri buildUri = Uri.parse(MOVIE_POP_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
                 .appendQueryParameter(LANG_PARAM,"zh")
-                .appendQueryParameter(PAGE_PARAM,"2")
+                .appendQueryParameter(PAGE_PARAM,"1")
                 .build();
         URL url = null;
         try{
@@ -58,7 +58,7 @@ public final class NetworkUtils {
         Uri buildUri = Uri.parse(MOVIE_RATE_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
                 .appendQueryParameter(LANG_PARAM,"zh")
-                .appendQueryParameter(PAGE_PARAM,"2")
+                .appendQueryParameter(PAGE_PARAM,"1")
                 .build();
         URL url = null;
         try{

@@ -81,7 +81,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
         return mCursor.getCount();
     }
 
-    void swapCursor(Cursor newCursor){
+    public void swapCursor(Cursor newCursor){
         mCursor = newCursor;
         notifyDataSetChanged();
     }

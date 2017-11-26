@@ -22,8 +22,6 @@ public class MovieSyncIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        Log.v("MovieSyncIntentService","start");
         MovieSyncTask.syncMovie(this);
-        Log.v("MovieSyncIntentService","end");
     }
 }

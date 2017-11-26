@@ -1,30 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<fragment
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/movie_list_fragment"
+    android:name="com.moming.jml.starmovie.fragment.MovieListFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.moming.jml.starmovie.MainActivity">
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/rv_movie_list"
-        android:layout_margin="8dp">
-    </android.support.v7.widget.RecyclerView>
-    <TextView
-        android:id="@+id/tv_error_message_display"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/error_message"
-        android:textSize="@dimen/title_text_size"
-        android:gravity="center"
-        android:visibility="invisible" />
-    <ProgressBar
-        android:id="@+id/pb_loading_indicator"
-        android:layout_height="42dp"
-        android:layout_width="42dp"
-        android:layout_gravity="center"
-        android:visibility="invisible" />
-
-</FrameLayout>
+    android:layout_height="match_parent" />
