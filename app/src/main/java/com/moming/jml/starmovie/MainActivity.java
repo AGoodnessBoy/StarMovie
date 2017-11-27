@@ -1,34 +1,21 @@
 package com.moming.jml.starmovie;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import com.moming.jml.starmovie.data.MovieContract;
-import com.moming.jml.starmovie.sync.MovieSyncUtils;
+import com.moming.jml.starmovie.fragment.MovieListFragment;
 
-public class MainActivity extends AppCompatActivity implements  IndexMovieAdapter.IndexMovieAdapterOnClickHandler{
+import static com.moming.jml.starmovie.fragment.MovieListFragment.ID_MOVIE_LOADER;
+
+public class MainActivity extends AppCompatActivity{
 
 
     private final String TAG = MainActivity.class.getSimpleName();
+
 
     public static final String[] MAIN_MOVIE_PROJECTION ={
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -44,8 +31,11 @@ public class MainActivity extends AppCompatActivity implements  IndexMovieAdapte
     public static final int INDEX_MOVIE_TITLE=3;
     public static final int INDEX_MOVIE_VOTE=4;
 
-
-    private ListFragment listFragment;
+    final static String SORT_BY_POP ="1";
+    final static String SORT_BY_TOP ="2";
+    final static String SORT_DEFAULT="0";
+    final static String SORT_KET = "sortBy";
+    final static String USER_COLLECTION="user_collection";
 
 
     @Override
@@ -53,14 +43,8 @@ public class MainActivity extends AppCompatActivity implements  IndexMovieAdapte
         super.onCreate(savedInstanceState);
         setContentView(R
                 .layout.activity_main);
-        listFragment = new ListFragment();
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .add(R.id.movie_list_fragment, listFragment)
-                .commit();
+
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,18 +52,40 @@ public class MainActivity extends AppCompatActivity implements  IndexMovieAdapte
         return super.onCreateOptionsMenu(menu);
     }
 
-
-
     @Override
-    public void onClick(String movieId) {
-        Context context= this;
-        Intent showMovieDetail = new Intent(context,MovieDetailActivity.class);
-        showMovieDetail.putExtra("movie_id",movieId);
-
-        startActivity(showMovieDetail);
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int theSelectedItemId=item.getItemId();
+        Bundle bundle = new Bundle();
+        MovieListFragment mlf = (MovieListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.movie_list_fragment);
+        switch (theSelectedItemId){
+            case R.id.action_sort_by_popular:
+                Log.v("menu","pop");
+                bundle.putString(SORT_KET,SORT_BY_POP);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                );
+                bundle.clear();
+                break;
+            case R.id.action_sort_by_rating:
+                Log.v("menu","top");
+                bundle.putString(SORT_KET,SORT_BY_TOP);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                );
+                bundle.clear();
+                break;
+            case R.id.action_user_collection:
+                bundle.putString(SORT_KET,USER_COLLECTION);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                );
+                bundle.clear();
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
-
 
 
 

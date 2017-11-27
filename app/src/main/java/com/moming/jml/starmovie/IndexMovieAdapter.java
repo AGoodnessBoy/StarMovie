@@ -25,7 +25,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
 
     private final Context mContext;
 
-    private Cursor mCursor;
+    protected Cursor mCursor;
 
     private final IndexMovieAdapterOnClickHandler mClickHandler;
 
@@ -67,7 +67,7 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
             @Override
             public void getOutline(View view, Outline outline) {
                 view.setClipToOutline(true);
-                outline.setRoundRect(16,16,view.getWidth(),view.getHeight(),10);
+                outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),2);
             }
         };
         holder.mMovieItemFrameLayout.setOutlineProvider(mProvider);
@@ -110,9 +110,5 @@ public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.Mo
             String movieId = mCursor.getString(MainActivity.INDEX_MOVIE_ID);
             mClickHandler.onClick(movieId);
         }
-    }
-    public void setMovieData(NewMovieEntity[] movieData){
-        mMovieData = movieData;
-        notifyDataSetChanged();
     }
 }

@@ -7,25 +7,33 @@
     android:orientation="horizontal"
     tools:context="com.moming.jml.starmovie.MainActivity">
 
-    <!-- The static MasterListFragment -->
     <fragment
         android:id="@+id/movie_list_fragment"
         android:name="com.moming.jml.starmovie.fragment.MovieListFragment"
-        android:layout_width="400dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent" />
-
-    <!-- A small divider -->
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray" />
 
 
-    <fragment
-        android:id="@+id/movie_detail_fragment"
-        android:name="com.moming.jml.starmovie.fragment.MovieDetailFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+    <FrameLayout
+        android:id="@+id/movie_detail_layout"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.moming.jml.starmovie.fragment.MovieDetailFragment"
+            android:id="@+id/movie_detail_fragment"/>
+
+
+    </FrameLayout>
+
 
 
 

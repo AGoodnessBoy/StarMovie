@@ -4,10 +4,10 @@
     <string name="rating_sort">评分最高</string>
     <string name="error_message">结果错误</string>
     <string name="more_message">更多信息</string>
-    <string name="movie_date">上映日期:</string>
+    <string name="movie_date">上映日期：</string>
     <string name="movie_type">类型:</string>
     <string name="movie_revenue">票房:</string>
-    <string name="movie_runtime">片长:</string>
+    <string name="movie_runtime">片长：</string>
     <string name="movie_status">状态:</string>
     <string name="pic_status">电影图片</string>
     <string name="user_collection">用户收藏</string>

@@ -12,6 +12,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,15 +58,21 @@ public class MovieListFragment extends Fragment implements
 
 
 
-
-    private RecyclerView mRecyclerView;
+    private boolean mTowPan;
+    protected RecyclerView mRecyclerView;
     private IndexMovieAdapter theMovieAdaper;
-    private int mPosition = RecyclerView.NO_POSITION;
+    protected int mPosition = RecyclerView.NO_POSITION;
+
+
 
     public LoaderManager.LoaderCallbacks<Cursor> callbacks;
 
     public MovieListFragment(){
 
+    }
+    private void replaceFragment(String id){
+        MovieDetailFragment md = (MovieDetailFragment) getFragmentManager().findFragmentById(R.id.movie_detail_fragment);
+        md.freshData(id);
     }
 
     @Override
@@ -108,6 +115,13 @@ public class MovieListFragment extends Fragment implements
                 theMovieAdaper.swapCursor(null);
             }
         };
+        if(getActivity().findViewById(R.id.movie_detail_layout)!=null){
+            mTowPan =true;
+            Log.v(TAG,"mTowPan=true");
+        }else {
+            mTowPan =false;
+            Log.v(TAG,"mTowPan=false");
+        }
         Bundle bundle = new Bundle();
         bundle.putString(SORT_KET,SORT_DEFAULT);
         getActivity().getSupportLoaderManager().initLoader(ID_MOVIE_LOADER,bundle,callbacks);
@@ -116,12 +130,10 @@ public class MovieListFragment extends Fragment implements
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_part,container,false);
-
         //mLoadingIndicator =(ProgressBar)view.findViewById(R.id.pb_loading_indicator);
-
         mRecyclerView=(RecyclerView)view.findViewById(R.id.rv_movie_list);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
@@ -129,26 +141,20 @@ public class MovieListFragment extends Fragment implements
         mRecyclerView.setHasFixedSize(true);
         theMovieAdaper= new IndexMovieAdapter(getContext(),this);
         mRecyclerView.setAdapter(theMovieAdaper);
+
         showLoading();
-
-
-
-
-
-
         return view;
-
-
     }
 
 
-
+    //失效状态
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int theSelectedItemId=item.getItemId();
         Bundle bundle = new Bundle();
         switch (theSelectedItemId){
             case R.id.action_sort_by_popular:
+                Log.v("menu","pop");
                 bundle.putString(SORT_KET,SORT_BY_POP);
                 getActivity().getSupportLoaderManager().restartLoader(
                         ID_MOVIE_LOADER,bundle,callbacks
@@ -156,6 +162,7 @@ public class MovieListFragment extends Fragment implements
                 bundle.clear();
                 break;
             case R.id.action_sort_by_rating:
+                Log.v("menu","top");
                 bundle.putString(SORT_KET,SORT_BY_TOP);
                 getActivity().getSupportLoaderManager().restartLoader(
                         ID_MOVIE_LOADER,bundle,callbacks
@@ -169,7 +176,6 @@ public class MovieListFragment extends Fragment implements
                 );
                 bundle.clear();
             default:
-
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -178,12 +184,10 @@ public class MovieListFragment extends Fragment implements
     private void showMovieData(){
         //mLoadingIndicator.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
-
     }
     private void showLoading(){
         mRecyclerView.setVisibility(View.INVISIBLE);
         //mLoadingIndicator.setVisibility(View.VISIBLE);
-
     }
 
     private String searchSelection(String args){
@@ -192,8 +196,6 @@ public class MovieListFragment extends Fragment implements
                 return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
             case SORT_BY_TOP:
                 return MovieContract.MovieEntry.COLUMN_MOVIE_TOP+" = 1";
-            case SORT_DEFAULT:
-                return MovieContract.MovieEntry.COLUMN_MOVIE_POP+" = 1";
             case USER_COLLECTION:
                 return MovieContract.MovieEntry.COLUMN_USER_COLLECTION+" = 1";
             default:
@@ -203,15 +205,26 @@ public class MovieListFragment extends Fragment implements
     }
 
 
-
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onClick(String movieId) {
-        Intent showMovieDetail = new Intent(getContext(),MovieDetailActivity.class);
-        showMovieDetail.putExtra("movie_id",movieId);
+        Log.v(TAG,movieId);
+        if (mTowPan){
+            Log.v(TAG,"mTowPan=true");
+            replaceFragment(movieId);
 
-        startActivity(showMovieDetail);
+        }else {
+            Log.v(TAG,"mTowPan=false");
+            Intent showMovieDetail = new Intent(getContext(),MovieDetailActivity.class);
+            showMovieDetail.putExtra("movie_id",movieId);
+            startActivity(showMovieDetail);
+        }
+
+
 
     }
 }

@@ -178,10 +178,14 @@ public final class OpenMovieJsonUtilsFromMovieDb {
 
     }
 
-    public static String getMovieReviewsJsonFromMD(String id){
+    public static String getMovieReviewsJsonFromMD(String id)
+    throws JSONException{
         try {
             URL reviewsUrl = NetworkUtils.buildMovieReviewsUrlFromMovieDbById(id);
             String reviewsReq = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
+            JSONObject rewiewsJson = new JSONObject(reviewsReq);
+            
+
             return reviewsReq;
         }catch (IOException e) {
             e.printStackTrace();

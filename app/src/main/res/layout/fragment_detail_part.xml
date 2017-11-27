@@ -4,26 +4,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.moming.jml.starmovie.MovieDetailActivity"
-    android:background="#786239">
+    android:background="@color/colorPrimaryDark">
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|center_vertical"
-        android:text="@string/error_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="查看你喜欢的电影吧！"
+        android:textSize="24sp"
+        android:gravity="center"
         android:visibility="invisible"
-        android:textColor="#FFF"
-        android:textSize="28sp"
-        android:id="@+id/tv_error_message_in_detail"/>
+        android:id="@+id/tv_pad_default"
+        />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_margin="16dp"
+        android:id="@+id/sv_movie_detail"
+        android:visibility="visible">
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/ShadowStyle"
-            android:elevation="4dp"
+            android:elevation="2dp"
             android:id="@+id/layout_of_movie_detail">
 
             <LinearLayout
@@ -31,23 +33,48 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/shape"
                 android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    >
+                    <TextView
+                        android:id="@+id/tv_movie_name_in_detail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6"
+                        tools:text="变形金刚"
+                        android:layout_gravity="center"
+                        android:textSize="@dimen/title_text_size" />
 
-                <TextView
-                    android:id="@+id/tv_movie_name_in_detail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="54dp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="0dp"
-                    android:paddingTop="18dp"
-                    tools:text="变形金刚"
-                    android:textSize="@dimen/title_text_size" />
+                    <Button
+                        style="@style/Widget.AppCompat.Button.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginRight="16dp"
+                        android:layout_gravity="center"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="0dp"
+                        android:background="@color/colorPrimary"
+                        android:elevation="3dp"
+                        android:text="收藏"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+
+                    </LinearLayout>
+
+
 
                 <ImageView
                     android:id="@+id/iv_movie_banner"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/default_movie"
+                    tools:src="@drawable/default_movie"
                     android:contentDescription="@string/pic_status"/>
 
 
@@ -56,13 +83,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginStart="16dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/movie_runtime"
-                        style="@style/TextStyleInDetail"/>
+                        style="@style/LabelStyleInDetail"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -70,48 +97,149 @@
                         style="@style/TextStyleInDetail"
                         android:id="@+id/tv_movie_runtime_in_detail"/>
                 </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginStart="16dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/movie_date"
-                        style="@style/TextStyleInDetail"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"/>
+                        style="@style/LabelStyleInDetail"
+                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="2015年05月07日"
                         style="@style/TextStyleInDetail"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
                         android:id="@+id/tv_movie_date_in_detail"/>
                 </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="评分："
+                        style="@style/LabelStyleInDetail"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="7.8"
+                        style="@style/TextStyleInDetail"
+                        android:id="@+id/tv_movie_rat_in_detail"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="简介："
+                        style="@style/LabelStyleInDetail"
+                        />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
 
 
                 <TextView
                     android:id="@+id/tv_movie_summary_in_detail"
                     android:layout_width="match_parent"
-                    android:layout_height="85dp"
-                    android:layout_marginBottom="12dp"
-                    android:layout_marginTop="12dp"
-                    android:ellipsize="marquee"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:lines="6"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:text="@string/summay"
+                    tools:text="@string/summay"
                     android:textColor="#b1b1b1"
-                    android:textSize="@dimen/default_text_size" />
+                    android:textSize="@dimen/normal_text_size" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="点评："
+                        style="@style/LabelStyleInDetail"
+                        />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="预告："
+                        style="@style/LabelStyleInDetail"
+                        />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/colorLine" />
 
                 <TextView
                     android:layout_width="match_parent"
