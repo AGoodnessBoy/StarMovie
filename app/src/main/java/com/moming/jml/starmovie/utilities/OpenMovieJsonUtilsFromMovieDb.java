@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.moming.jml.starmovie.data.MovieContract;
+import com.moming.jml.starmovie.entities.ReviewsEntity;
+import com.moming.jml.starmovie.entities.VideosEntity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,12 +78,8 @@ public final class OpenMovieJsonUtilsFromMovieDb {
     final static String MOVIE_IMG_PATH="backdrop_path";//电影图片
     final static String MOVIE_VOTE="vote_average";//电影评分
     final static String MOVIE_OVERVIEW="overview";//电影简介
-    final static String MOVIE_TYPE="genres";//电影类型
-    final static String MOVIE_COMPANY="production_companies";//电影公司
-    final static String MOVIE_STATUS="status";//发行状态
     final static String MOVIE_RELEASE_DATE="release_date";//发行时间
     final static String MOVIE_RUNTIME="runtime";//电影时长
-    final static String MOVIE_REVENUE="revenue";//票房
     final static String MOVIE_POSTER_PATH="poster_path";//电影海报
 
     final static int MOVIE_POP = 1;
@@ -122,9 +120,6 @@ public final class OpenMovieJsonUtilsFromMovieDb {
             String movie_release = movieTempObj.getString(MOVIE_RELEASE_DATE);
             String movie_overview =movieTempObj.getString(MOVIE_OVERVIEW);
 
-            //String movie_video = getMovieVideoJsonFromMD(movie_id);
-            //String movie_reviews =getMovieReviewsJsonFromMD(movie_id);
-           // String movie_item = getMovieItemJsonFromMD(movie_id);
 
 
 
@@ -139,8 +134,7 @@ public final class OpenMovieJsonUtilsFromMovieDb {
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE,movie_release);
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE,movie_vote);
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW,movie_overview);
-            //movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TRAILER,movie_video);
-            //movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_COMMEMT,movie_reviews);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_USER_COLLECTION,0);
 
 
 
@@ -166,11 +160,83 @@ public final class OpenMovieJsonUtilsFromMovieDb {
         return movieCVs;
     }
 
-    public static String getMovieVideoJsonFromMD(String id){
+    public static String getMovieRuntimeFromMD(String id)
+    throws JSONException{
+        String result="";
+        try {
+            URL url = NetworkUtils.buildMovieItemUrlFromMovieDbById(id);
+            String req = NetworkUtils.getResponseFromHttpUrl(url);
+
+            JSONObject json = new JSONObject(req);
+            Log.v("runtime",json.toString());
+            Log.v("runtime",json.getString(MOVIE_RUNTIME));
+
+            String runtime = json.getString(MOVIE_RUNTIME);
+            Log.v("runtime",runtime);
+            if (runtime == ""||runtime == null||("0").equals(runtime)){
+                result = "未知";
+            }else {
+                result = runtime+" 分钟";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+
+    public static VideosEntity[] getMovieVideoJsonFromMD(String id)
+            throws JSONException{
+
         try {
             URL videoUrl = NetworkUtils.buildMovieVideoUrlFromMovieDbById(id);
             String videoReq = NetworkUtils.getResponseFromHttpUrl(videoUrl);
-           return videoReq;
+            JSONObject videoJson = new JSONObject(videoReq);
+
+
+
+            if (videoJson.has("status_code")){
+                int errorCode = videoJson.getInt("status_code");
+                VideosEntity ve = new VideosEntity();
+                switch (errorCode){
+                    case 7:ve.setInfo(videoJson.getString("status_message"));break;
+                    case 34:ve.setInfo(videoJson.getString("status_message"));break;
+                    default:ve.setInfo("其他错误");
+                }
+                VideosEntity[] mVes= new VideosEntity[1];
+                mVes[0] = ve;
+                return mVes;
+            }else {
+                JSONArray jsonArray = videoJson.getJSONArray("results");
+                if (jsonArray.length()==0){
+                    VideosEntity ve = new VideosEntity();
+                    ve.setInfo("暂无预告");
+                    VideosEntity[] mVes= new VideosEntity[1];
+                    mVes[0] = ve;
+                    return mVes;
+                }else {
+                    String movie_id = videoJson.getString("id");
+
+                    VideosEntity[] mVes= new VideosEntity[jsonArray.length()];
+                    for (int i=0;i<jsonArray.length();i++){
+                        VideosEntity ve = new VideosEntity();
+                        JSONObject jsonVideoSingle =jsonArray.getJSONObject(i);
+                        ve.setInfo("success");
+                        ve.setMovie_id(movie_id);
+                        ve.setVideo_id(jsonVideoSingle.getString("id"));
+                        ve.setVideo_key(jsonVideoSingle.getString("key"));
+                        ve.setVideo_site(jsonVideoSingle.getString("site"));
+                        ve.setVideo_name(jsonVideoSingle.getString("name"));
+                        mVes[i] = ve;
+                    }
+
+                    return mVes;
+                }
+
+
+            }
         }catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -178,15 +244,53 @@ public final class OpenMovieJsonUtilsFromMovieDb {
 
     }
 
-    public static String getMovieReviewsJsonFromMD(String id)
+
+    public static ReviewsEntity[] getMovieReviewsJsonFromMD(String id)
     throws JSONException{
         try {
             URL reviewsUrl = NetworkUtils.buildMovieReviewsUrlFromMovieDbById(id);
             String reviewsReq = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
+            Log.v("rejson",reviewsReq);
             JSONObject rewiewsJson = new JSONObject(reviewsReq);
-            
+            if (rewiewsJson.has("status_code")){
+                int errorCode = rewiewsJson.getInt("status_code");
+                ReviewsEntity re = new ReviewsEntity();
+                switch (errorCode){
+                    case 7:re.setInfo(rewiewsJson.getString("status_message"));break;
+                    case 34:re.setInfo(rewiewsJson.getString("status_message"));break;
+                    default:re.setInfo("其他错误");
+                }
+                ReviewsEntity[] mRes= new ReviewsEntity[1];
+                mRes[0] = re;
+                return mRes;
+            }else {
+                JSONArray jsonArray = rewiewsJson.getJSONArray("results");
+                if (jsonArray.length()==0){
+                    ReviewsEntity re = new ReviewsEntity();
+                    re.setInfo("暂无评论");
+                    ReviewsEntity[] mRes= new ReviewsEntity[1];
+                    mRes[0] = re;
+                    return mRes;
+                }else {
+                    String movie_id = rewiewsJson.getString("id");
 
-            return reviewsReq;
+                    ReviewsEntity[] mRes= new ReviewsEntity[jsonArray.length()];
+                    for (int i=0;i<jsonArray.length();i++){
+                        ReviewsEntity re = new ReviewsEntity();
+                        JSONObject jsonVideoSingle =jsonArray.getJSONObject(i);
+                        re.setInfo("success");
+                        re.setMovie_id(movie_id);
+                        re.setReviews_id(jsonVideoSingle.getString("id"));
+                        re.setAuthor(jsonVideoSingle.getString("author"));
+                        re.setReviews_content(jsonVideoSingle.getString("content"));
+
+                        mRes[i] = re;
+                    }
+
+                    return mRes;
+                }
+
+            }
         }catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -194,17 +298,9 @@ public final class OpenMovieJsonUtilsFromMovieDb {
 
     }
 
-    public static String getMovieItemJsonFromMD(String id){
-        try {
-            URL itemUrl = NetworkUtils.buildMovieItemUrlFromMovieDbById(id);
-            String itemReq = NetworkUtils.getResponseFromHttpUrl(itemUrl);
-            return itemReq;
-        }catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
 
-    }
+
+
 
 
 

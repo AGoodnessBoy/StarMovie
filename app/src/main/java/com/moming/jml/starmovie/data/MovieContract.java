@@ -42,15 +42,11 @@ public class MovieContract {
 
         public static final String COLUMN_MOVIE_POSTER = "poster"; //海报图
 
-     //   public static final String COLUMN_MOVIE_TYPE = "type"; //类型 数组
-
-     //   public static final String COLUMN_MOVIE_STATUS = "status"; //状态
 
         public static final String COLUMN_MOVIE_RELEASE = "release"; //发行日期
 
         public static final String COLUMN_MOVIE_RUNTIME = "runtime"; //时长
 
-    //    public static final String COLUMN_MOVIE_REVENUE = "revenue";//票房
 
         public static final String COLUMN_MOVIE_TRAILER = "trailer";//预告
 

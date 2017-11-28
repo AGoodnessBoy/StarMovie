@@ -22,10 +22,14 @@ public final class NetworkUtils {
     public static final String MOVIE_SUBJECT_URL=MOVIE_API+"subject/";//单个条目检索
 
     //the movie db api URL
-    public static final String THE_MOVIE_DB_API_KEY="5ff6126cef0585783e7849804fc8a188";
+    public static final String THE_MOVIE_DB_API_KEY="";
     public static final String THE_MOVIE_DB_API="https://api.themoviedb.org/3/movie/";
     public static final String MOVIE_POP_URL=THE_MOVIE_DB_API+"popular";
     public static final String MOVIE_RATE_URL=THE_MOVIE_DB_API+"top_rated";
+
+    //youtube URL
+
+    public static final String THE_YOUTUBE_URL="https://www.youtube.com/watch";
 
     private static final String format = "json";
 
@@ -38,10 +42,24 @@ public final class NetworkUtils {
     final static String LANG_PARAM="language";
     final static String PAGE_PARAM="page";
 
+    //youtube api 参数
+
+    final static String WATCH_PARAM="v";
+
+
+    public static Uri buildYouTuBeUrl(String key){
+        Uri buildUri = Uri.parse(THE_YOUTUBE_URL).buildUpon()
+                .appendQueryParameter(WATCH_PARAM,key)
+                .build();
+
+        return buildUri;
+    }
+
+
     public static URL buildMoviePopUrlFromMovieDb(){
         Uri buildUri = Uri.parse(MOVIE_POP_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
-                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(LANG_PARAM,"en-US")
                 .appendQueryParameter(PAGE_PARAM,"1")
                 .build();
         URL url = null;
@@ -57,7 +75,7 @@ public final class NetworkUtils {
     public static URL buildMovieTopUrlFromMovieDb(){
         Uri buildUri = Uri.parse(MOVIE_RATE_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
-                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(LANG_PARAM,"en-US")
                 .appendQueryParameter(PAGE_PARAM,"1")
                 .build();
         URL url = null;
@@ -74,7 +92,7 @@ public final class NetworkUtils {
         String MOVIE_VIDEO_URL= THE_MOVIE_DB_API+id+"/videos";
         Uri buildUri = Uri.parse(MOVIE_VIDEO_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
-                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(LANG_PARAM,"en-US")
                 .build();
         URL url = null;
         try {
@@ -89,7 +107,7 @@ public final class NetworkUtils {
         String MOVIE_REVIEW_URL= THE_MOVIE_DB_API+id+"/reviews";
         Uri buildUri = Uri.parse(MOVIE_REVIEW_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
-                .appendQueryParameter(LANG_PARAM,"zh")
+                .appendQueryParameter(LANG_PARAM,"en-US")
                 .appendQueryParameter(PAGE_PARAM,"1")
                 .build();
         URL url = null;
@@ -105,7 +123,7 @@ public final class NetworkUtils {
         String MOVIE_ITEM_URL=THE_MOVIE_DB_API+id;
         Uri buildUri = Uri.parse(MOVIE_ITEM_URL).buildUpon()
                 .appendQueryParameter(APIKEY_PARAM,THE_MOVIE_DB_API_KEY)
-                .appendQueryParameter(LANG_PARAM,"zh").build();
+                .appendQueryParameter(LANG_PARAM,"en-US").build();
         URL url = null;
         try{
             url = new URL(buildUri.toString());

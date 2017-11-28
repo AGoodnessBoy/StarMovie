@@ -12,16 +12,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.moming.jml.starmovie.entities.NewMovieEntity;
 import com.squareup.picasso.Picasso;
 
 /**
- * Created by jml on 2017/9/22.
+ * Created by jml on 2017/9/22
  */
 
 public class IndexMovieAdapter extends RecyclerView.Adapter<IndexMovieAdapter.MovieAdapterViewHolder> {
 
-    private NewMovieEntity[] mMovieData;
+
 
     private final Context mContext;
 

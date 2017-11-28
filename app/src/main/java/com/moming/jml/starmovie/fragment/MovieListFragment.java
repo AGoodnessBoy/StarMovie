@@ -26,7 +26,7 @@ import com.moming.jml.starmovie.data.MovieContract;
 import com.moming.jml.starmovie.sync.MovieSyncUtils;
 
 /**
- * Created by jml on 2017/11/26.
+ * Created by jml on 2017/11/26
  */
 
 public class MovieListFragment extends Fragment implements

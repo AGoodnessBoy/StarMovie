@@ -33,20 +33,7 @@ public class MovieSyncTask {
                     context,jsonMoviePop,1
             );
 
-            if (popValues != null && popValues .length !=0){
-                ContentResolver movieResolver = context.getContentResolver();
-                movieResolver.bulkInsert(
-                        MovieContract.MovieEntry.CONTENT_URI,popValues);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.v("syncMovie","top");
 
-        //top request
-        try {
             URL movieTopRequestUrl =
                     NetworkUtils.buildMovieTopUrlFromMovieDb();
             String jsonMovieTop = NetworkUtils.
@@ -55,18 +42,24 @@ public class MovieSyncTask {
                     context,jsonMovieTop,2
             );
 
-            if (topValues != null && topValues .length !=0){
+            if (popValues != null && popValues .length !=0&&topValues != null && topValues.length !=0){
                 ContentResolver movieResolver = context.getContentResolver();
-                movieResolver.bulkInsert(
-                        MovieContract.MovieEntry.CONTENT_URI,topValues);
+                int id = movieResolver.delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
+                if (id!=0) {
+                    movieResolver.bulkInsert(
+                            MovieContract.MovieEntry.CONTENT_URI,popValues);
+                    Log.v("更新数据","pop");
+                    movieResolver.bulkInsert(
+                            MovieContract.MovieEntry.CONTENT_URI,topValues);
+                    Log.v("更新数据","top");
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
 
 
     }

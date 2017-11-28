@@ -23,8 +23,6 @@ public class MovieDetailActivity extends AppCompatActivity{
                 R.id.movie_detail_fragment);
         md.freshData(sMovieId);
 
-
-
     }
 
 

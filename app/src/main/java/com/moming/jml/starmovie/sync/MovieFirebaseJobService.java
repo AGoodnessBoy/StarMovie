@@ -7,7 +7,7 @@ import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 
 /**
- * Created by admin on 2017/11/24.
+ * Created by admin on 2017/11/24
  */
 
 public class MovieFirebaseJobService extends JobService{

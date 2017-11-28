@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.Driver;
@@ -19,7 +18,7 @@ import com.moming.jml.starmovie.data.MovieContract;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by jml on 2017/11/23.
+ * Created by jml on 2017/11/23
  */
 
 public class MovieSyncUtils {

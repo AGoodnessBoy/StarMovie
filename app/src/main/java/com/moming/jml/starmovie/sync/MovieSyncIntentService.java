@@ -3,10 +3,9 @@ package com.moming.jml.starmovie.sync;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 /**
- * Created by jml on 2017/11/21.
+ * Created by jml on 2017/11/21
  */
 
 public class MovieSyncIntentService extends IntentService {

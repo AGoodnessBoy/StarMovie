@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.moming.jml.starmovie.data.MovieContract;
 import com.moming.jml.starmovie.fragment.MovieListFragment;
+import com.moming.jml.starmovie.sync.MovieSyncUtils;
 
 import static com.moming.jml.starmovie.fragment.MovieListFragment.ID_MOVIE_LOADER;
 
@@ -81,6 +82,17 @@ public class MainActivity extends AppCompatActivity{
                         ID_MOVIE_LOADER,bundle,mlf.callbacks
                 );
                 bundle.clear();
+                break;
+            case R.id.action_reflash:
+
+                MovieSyncUtils.startImmediateSync(this);
+                bundle.putString(SORT_KET,SORT_BY_POP);
+                getSupportLoaderManager().restartLoader(
+                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                );
+                bundle.clear();
+
+                break;
             default:
                 break;
         }

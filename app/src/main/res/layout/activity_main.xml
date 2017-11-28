@@ -4,4 +4,5 @@
     android:id="@+id/movie_list_fragment"
     android:name="com.moming.jml.starmovie.fragment.MovieListFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    />

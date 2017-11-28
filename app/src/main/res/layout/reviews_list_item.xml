@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:paddingRight="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="点评人"
+            android:id="@+id/tv_review_name"
+            style="@style/ReviewNameStyleInDetail"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_review_content"
+            tools:text="不是太吓人，但是小孩子们都好可爱。旁边坐了一对尖叫基侣，最吓人的一幕无暇看银幕就看他俩表演了"
+            style="@style/ReviewTextStyleInDetail"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

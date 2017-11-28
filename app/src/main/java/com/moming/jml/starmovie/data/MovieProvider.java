@@ -170,8 +170,24 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        throw new RuntimeException("We are not implementing update in StarMovie");
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
+        int updateReturn;
+        switch (sUriMatcher.match(uri)){
+            case CODE_MOVIE_WITH_ID:
+                updateReturn = mOpenHelper.getWritableDatabase().update(
+                        MovieContract.MovieEntry.TABLE_NAME,values,selection,selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (updateReturn!=0){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+
+        return updateReturn;
+
     }
 
     @Override

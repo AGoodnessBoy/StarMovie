@@ -31,4 +31,27 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="ReviewNameStyleInDetail">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="ReviewTextStyleInDetail">
+        <item name="android:textColor">@color/colorTextLight</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="VideosNameStyleInDetail">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
 </resources>
