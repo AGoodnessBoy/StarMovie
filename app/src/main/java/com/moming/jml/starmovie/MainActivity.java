@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity{
     final static String USER_COLLECTION="user_collection";
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity{
                 .layout.activity_main);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity{
         Bundle bundle = new Bundle();
         MovieListFragment mlf = (MovieListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.movie_list_fragment);
+
         switch (theSelectedItemId){
             case R.id.action_sort_by_popular:
                 Log.v("menu","pop");

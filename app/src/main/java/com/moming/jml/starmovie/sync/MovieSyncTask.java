@@ -42,17 +42,18 @@ public class MovieSyncTask {
                     context,jsonMovieTop,2
             );
 
-            if (popValues != null && popValues .length !=0&&topValues != null && topValues.length !=0){
+            if (popValues != null && popValues .length !=0
+                    &&topValues != null && topValues.length !=0){
                 ContentResolver movieResolver = context.getContentResolver();
-                int id = movieResolver.delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
-                if (id!=0) {
-                    movieResolver.bulkInsert(
-                            MovieContract.MovieEntry.CONTENT_URI,popValues);
-                    Log.v("更新数据","pop");
-                    movieResolver.bulkInsert(
-                            MovieContract.MovieEntry.CONTENT_URI,topValues);
-                    Log.v("更新数据","top");
-                }
+                movieResolver.delete(MovieContract.MovieEntry.CONTENT_URI,null,null);
+                movieResolver.bulkInsert(
+                        MovieContract.MovieEntry.CONTENT_URI,popValues);
+                Log.v("更新数据","pop");
+               movieResolver.bulkInsert(
+                       MovieContract.MovieEntry.CONTENT_URI,topValues);
+                Log.v("更新数据","top");
+
+
 
             }
         } catch (IOException e) {

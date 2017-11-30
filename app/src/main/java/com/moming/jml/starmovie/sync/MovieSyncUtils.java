@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.Driver;
@@ -64,6 +65,7 @@ public class MovieSyncUtils {
 
 
                         if (null == cursor || cursor.getCount() == 0){
+                            Log.v("cursor" ,"startImmediateSync");
                             startImmediateSync(context);
                         }
                         cursor.close();
