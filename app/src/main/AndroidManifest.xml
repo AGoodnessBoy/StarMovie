@@ -8,9 +8,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleTop"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:launchMode="singleTop">
+        android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,22 +18,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MovieDetailActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
-        <service android:name=".sync.MovieSyncIntentService"
-            android:exported="false">
+        <activity
+            android:name=".MovieDetailActivity"
+            android:parentActivityName=".MainActivity"></activity>
 
-        </service>
-        <service android:name=".sync.MovieFirebaseJobService"
-            android:exported="false">
+        <service
+            android:name=".sync.MovieSyncIntentService"
+            android:exported="false"></service>
+        <service
+            android:name=".sync.MovieFirebaseJobService"
+            android:exported="false"></service>
 
-        </service>
         <provider
+            android:name=".data.MovieProvider"
             android:authorities="com.moming.jml.starmovie"
-            android:name="com.moming.jml.starmovie.data.MovieProvider"
-            android:exported="false"></provider>
-    </application>
+            android:exported="false" />
 
+        <activity android:name=".SettingsActivity"></activity>
+    </application>
 
 </manifest>

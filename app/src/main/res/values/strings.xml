@@ -18,4 +18,17 @@
         圾场看管着一群幸存的汽车人。与此同时，失踪的擎天柱被女巫昆塔莎黑化，要毁灭地球。拯救世界的责任于是落在了这支由凯德为首
         的非同寻常的队伍身上，大黄蜂、一位英国爵士（安东尼·霍普金斯饰）还有一位牛津大学教授（劳拉·哈德克饰），一场史诗浩劫彻底
         将地球变成了战场 。</string>
+
+    <string name="pref_sort_label">排序方式</string>
+    <string name="pref_sort_key">sort</string>
+
+    <string name="pref_sort_by_pop_value" translatable="false">pop</string>
+    <string name="pref_sort_by_top_value" translatable="false">top</string>
+    <string name="pref_sort_by_col_value" translatable="false">col</string>
+    <string name="pref_sort_by_pop_label">热门</string>
+    <string name="pref_sort_by_top_label">评分</string>
+    <string name="pref_sort_by_col_label">收藏</string>
+
+
+
 </resources>
