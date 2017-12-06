@@ -2,6 +2,7 @@ package com.moming.jml.starmovie.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -18,9 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.moming.jml.starmovie.IndexMovieAdapter;
-import com.moming.jml.starmovie.MainActivity;
 import com.moming.jml.starmovie.MovieDetailActivity;
 import com.moming.jml.starmovie.R;
 import com.moming.jml.starmovie.data.MovieContract;
@@ -36,11 +38,17 @@ public class MovieListFragment extends Fragment implements
     private final String TAG = MovieListFragment.class.getSimpleName();
     public static final int ID_MOVIE_LOADER = 32;
 
-    final static String SORT_BY_POP ="1";
-    final static String SORT_BY_TOP ="2";
-    final static String SORT_DEFAULT="0";
+    public int lastOffset;
+    public int lastPosition;
+
+    public final static String LASTOFFSET = "last_offset";
+
+    public final static String LASTPOSITION = "last_position";
+
+    final static String SORT_BY_POP ="pop";
+    final static String SORT_BY_TOP ="top";
     final static String SORT_KET = "sortBy";
-    final static String USER_COLLECTION="user_collection";
+    final static String USER_COLLECTION="col";
 
     public static final String[] MAIN_MOVIE_PROJECTION ={
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -60,11 +68,33 @@ public class MovieListFragment extends Fragment implements
 
 
     private boolean mTowPan;
-    protected RecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
     private IndexMovieAdapter theMovieAdaper;
     protected int mPosition = RecyclerView.NO_POSITION;
 
     private ProgressBar mLoadingIndicator;
+    private TextView mNullDataTextView;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mListener=
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    Log.v("pref-fragment",key);
+
+                    if (key.equals(getString(R.string.pref_sort_key))){
+
+                        Log.v("pref-fragment",key);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(SORT_KET,getSortFromPreference(sharedPreferences));
+
+                        getActivity().getSupportLoaderManager().restartLoader(
+                                ID_MOVIE_LOADER,bundle,callbacks);
+                        bundle.clear();
+
+                    }
+                }
+            };
 
 
 
@@ -79,24 +109,22 @@ public class MovieListFragment extends Fragment implements
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.v(TAG,"create");
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .registerOnSharedPreferenceChangeListener(mListener);
+        Log.v(TAG,PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("sort",""));
+
+
+
+
+
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if(getActivity().findViewById(R.id.movie_detail_layout)!=null){
-            mTowPan =true;
-            Log.v(TAG,"mTowPan=true");
-        }else {
-            mTowPan =false;
-            Log.v(TAG,"mTowPan=false");
-        }
-
-        Bundle bundle = new Bundle();
-        bundle.putString(SORT_KET,SORT_BY_POP);
-        getActivity().getSupportLoaderManager().initLoader(ID_MOVIE_LOADER,bundle,callbacks);
-        MovieSyncUtils.initialize(getContext());
-
-
-
 
 
     }
@@ -108,12 +136,24 @@ public class MovieListFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_list_part,container,false);
         mLoadingIndicator =(ProgressBar)view.findViewById(R.id.pb_loading);
         mRecyclerView=(RecyclerView)view.findViewById(R.id.rv_movie_list);
+        mNullDataTextView = (TextView)view.findViewById(R.id.tv_null_data);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         theMovieAdaper= new IndexMovieAdapter(getContext(),this);
         mRecyclerView.setAdapter(theMovieAdaper);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (recyclerView.getLayoutManager()!=null){
+                    getPositionAndOffset();
+                }
+            }
+        });
+
         callbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
 
             @Override
@@ -148,6 +188,8 @@ public class MovieListFragment extends Fragment implements
                 Log.v("data",Integer.toString(data.getCount()));
                 if (data.getCount()!=0 ) {
                     showMovieData();
+                }else {
+                    showNullData();
                 }
             }
 
@@ -158,7 +200,99 @@ public class MovieListFragment extends Fragment implements
             }
         };
 
+        if(getActivity().findViewById(R.id.movie_detail_layout)!=null){
+            mTowPan =true;
+            Log.v(TAG,"mTowPan=true");
+        }else {
+            mTowPan =false;
+            Log.v(TAG,"mTowPan=false");
+        }
+
+        if (savedInstanceState != null) {
+            Log.v("savedInstanceState","not null");
+            Log.v("savedInstanceState",Integer.toString(savedInstanceState.getInt(LASTOFFSET)));
+            Log.v("savedInstanceState",Integer.toString(savedInstanceState.getInt(LASTPOSITION)));
+            Bundle bundle = new Bundle();
+            SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            bundle.putString(SORT_KET,getSortFromPreference(mSharedPreferences));
+            getActivity().getSupportLoaderManager().restartLoader(ID_MOVIE_LOADER,bundle,callbacks);
+            bundle.clear();
+
+            //mRecyclerView.scrollToPosition(16);
+
+            //mRecyclerView.scrollTo(12,0);
+           mRecyclerView.getLayoutManager().scrollToPosition(12);
+            ((StaggeredGridLayoutManager)mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(10,0);
+            //((StaggeredGridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(
+              //      savedInstanceState.getInt(LASTPOSITION), savedInstanceState.getInt(LASTOFFSET));
+
+        }else{
+            Bundle bundle = new Bundle();
+            SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            bundle.putString(SORT_KET,getSortFromPreference(mSharedPreferences));
+            getActivity().getSupportLoaderManager().initLoader(ID_MOVIE_LOADER,bundle,callbacks);
+            MovieSyncUtils.initialize(getContext());
+            bundle.clear();
+        }
+
         return view;
+    }
+
+
+    private void getPositionAndOffset(){
+        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) mRecyclerView.getLayoutManager();
+        View topView = layoutManager.getChildAt(0);
+
+        if (topView != null){
+            lastOffset = topView.getTop();
+            lastPosition = layoutManager.getPosition(topView);
+
+            Log.v("OFF",Integer.toString(lastOffset));
+            Log.v("OFF",Integer.toString(lastPosition));
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        Log.v(TAG,"resume");
+
+        super.onResume();
+
+    }
+
+
+    @Override
+    public void onPause() {
+        Log.v(TAG,"pause");
+
+        super.onPause();
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.v(TAG,"start");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.v(TAG,"stop");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v(TAG,"destory");
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .unregisterOnSharedPreferenceChangeListener(mListener);
+    }
+
+    private String getSortFromPreference(SharedPreferences sharedPreferences){
+        int sort_key = R.string.pref_sort_key;
+        return sharedPreferences.getString(getString(sort_key),"");
     }
 
 
@@ -203,10 +337,17 @@ public class MovieListFragment extends Fragment implements
     private void showMovieData(){
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mNullDataTextView.setVisibility(View.INVISIBLE);
     }
     private void showLoading(){
         mRecyclerView.setVisibility(View.INVISIBLE);
         mLoadingIndicator.setVisibility(View.VISIBLE);
+        mNullDataTextView.setVisibility(View.INVISIBLE);
+    }
+    private void showNullData(){
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mNullDataTextView.setVisibility(View.VISIBLE);
     }
 
     private String searchSelection(String args){
@@ -227,6 +368,12 @@ public class MovieListFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(LASTOFFSET,lastOffset);
+        outState.putInt(LASTPOSITION,lastPosition);
+
+        Log.v(TAG,Integer.toString(lastOffset));
+        Log.v(TAG,Integer.toString(lastPosition));
+
     }
 
     @Override
@@ -246,4 +393,7 @@ public class MovieListFragment extends Fragment implements
 
 
     }
+
+
+
 }

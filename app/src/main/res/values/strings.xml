@@ -11,6 +11,7 @@
     <string name="movie_status">状态:</string>
     <string name="pic_status">电影图片</string>
     <string name="user_collection">用户收藏</string>
+    <string name="settings">设置</string>
     <string name="reflash">更新数据</string>
     <string name="summay">地球陷入毁灭危机，擎天柱失踪，越来越多的汽车人和霸天虎来到地球，前海豹突击队成员威廉·伦诺克斯
         （ 乔什·杜哈明饰）成为了政府军组建的TRF中的一员，负责绞杀地球上的汽车人——不论好坏。在芝加哥街头，伦诺克斯遇到了凯德
@@ -20,7 +21,7 @@
         将地球变成了战场 。</string>
 
     <string name="pref_sort_label">排序方式</string>
-    <string name="pref_sort_key">sort</string>
+    <string name="pref_sort_key" translatable="false">sort</string>
 
     <string name="pref_sort_by_pop_value" translatable="false">pop</string>
     <string name="pref_sort_by_top_value" translatable="false">top</string>

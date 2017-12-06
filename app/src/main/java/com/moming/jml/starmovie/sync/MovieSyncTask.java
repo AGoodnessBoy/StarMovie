@@ -49,10 +49,9 @@ public class MovieSyncTask {
                 movieResolver.bulkInsert(
                         MovieContract.MovieEntry.CONTENT_URI,popValues);
                 Log.v("更新数据","pop");
-               movieResolver.bulkInsert(
+                movieResolver.bulkInsert(
                        MovieContract.MovieEntry.CONTENT_URI,topValues);
                 Log.v("更新数据","top");
-
 
 
             }

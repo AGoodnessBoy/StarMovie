@@ -154,36 +154,8 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mMovieId!=null){
-
-                    String[] projection = {
-                            MovieContract.MovieEntry.COLUMN_USER_COLLECTION
-                    };
-                    Cursor cursor = getContext().getContentResolver().query(
-                            mUri,projection,null,null,null);
-                    cursor.moveToFirst();
-                    int collection = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_USER_COLLECTION));
-                    cursor.close();
-                    if (Integer.toString(collection).equals("1")){
-                        mCollectionButton.setText("收藏");
-                        ContentValues contentValues= new ContentValues();
-                        contentValues.put(MovieContract.MovieEntry.COLUMN_USER_COLLECTION,0);
-                        getContext().getContentResolver().update(mUri,contentValues,
-                                MovieContract.MovieEntry.COLUMN_MOVIE_ID+" = "+mMovieId,null);
-
-                        Toast.makeText(getContext(),"已取消收藏",Toast.LENGTH_SHORT).show();
-                    }else {
-                        mCollectionButton.setText("已收藏");
-                        ContentValues contentValues= new ContentValues();
-                        contentValues.put(MovieContract.MovieEntry.COLUMN_USER_COLLECTION,1);
-                        getContext().getContentResolver().update(mUri,contentValues,
-                                MovieContract.MovieEntry.COLUMN_MOVIE_ID+" = "+mMovieId,null);
-
-
-                        Toast.makeText(getContext(),"已收藏电影",Toast.LENGTH_SHORT).show();
-                    }
-
-
-
+                    ClickTask clickTask = new ClickTask();
+                    clickTask.execute(mMovieId);
                 }
             }
         });
@@ -302,6 +274,49 @@ public class MovieDetailFragment extends Fragment {
             startActivity(videoIntent);
         }
 
+    }
+
+    class ClickTask extends AsyncTask<String,Void,Integer>{
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+
+            String[] projection = {
+                    MovieContract.MovieEntry.COLUMN_USER_COLLECTION
+            };
+            Cursor cursor = getContext().getContentResolver().query(
+                    mUri,projection,null,null,null);
+            cursor.moveToFirst();
+            int collection = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_USER_COLLECTION));
+            cursor.close();
+
+            return collection;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+
+            if (Integer.toString(integer).equals("1")){
+                mCollectionButton.setText("收藏");
+                ContentValues contentValues= new ContentValues();
+                contentValues.put(MovieContract.MovieEntry.COLUMN_USER_COLLECTION,0);
+                getContext().getContentResolver().update(mUri,contentValues,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID+" = "+mMovieId,null);
+
+                Toast.makeText(getContext(),"已取消收藏",Toast.LENGTH_SHORT).show();
+            }else {
+                mCollectionButton.setText("已收藏");
+                ContentValues contentValues= new ContentValues();
+                contentValues.put(MovieContract.MovieEntry.COLUMN_USER_COLLECTION,1);
+                getContext().getContentResolver().update(mUri,contentValues,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID+" = "+mMovieId,null);
+
+
+                Toast.makeText(getContext(),"已收藏电影",Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
     }
 
     class VideosTask extends AsyncTask<String,Void,VideosEntity[]>{

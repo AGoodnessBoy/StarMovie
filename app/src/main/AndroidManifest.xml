@@ -34,7 +34,9 @@
             android:authorities="com.moming.jml.starmovie"
             android:exported="false" />
 
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity">
+
+        </activity>
     </application>
 
 </manifest>

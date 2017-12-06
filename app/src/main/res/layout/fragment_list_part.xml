@@ -13,6 +13,15 @@
         android:layout_gravity="center"
         android:visibility="invisible"
         />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="暂无数据"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:id="@+id/tv_null_data"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

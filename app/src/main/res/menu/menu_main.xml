@@ -9,8 +9,14 @@
     <item
         android:id="@+id/action_user_collection"
         android:title="@string/user_collection"/>
+
+
     <item
         android:id="@+id/action_reflash"
         android:title="@string/reflash"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings" />
 
 </menu>

@@ -55,4 +55,9 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <style name="SettingsButtonStyle">
+        <item name="android:background">@color/colorWindow</item>
+
+    </style>
+
 </resources>
