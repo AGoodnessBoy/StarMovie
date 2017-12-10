@@ -3,24 +3,33 @@ package com.moming.jml.starmovie;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.bus.ActivityResultBus;
+import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.bus.ActivityResultEvent;
 import com.moming.jml.starmovie.data.MovieContract;
 import com.moming.jml.starmovie.data.MoviePerference;
+import com.moming.jml.starmovie.fragment.MovieDetailFragment;
 import com.moming.jml.starmovie.fragment.MovieListFragment;
 import com.moming.jml.starmovie.sync.MovieSyncUtils;
 
 import static com.moming.jml.starmovie.fragment.MovieListFragment.ID_MOVIE_LOADER;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends AppCompatActivity{
 
-
+    public final static String LASTOFFSET = "last_offset";
+    public final static String LASTPOSITION = "last_position";
     private final String TAG = MainActivity.class.getSimpleName();
+
+    Bundle saveStateInMain;
 
 
     public static final String[] MAIN_MOVIE_PROJECTION ={
@@ -42,6 +51,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     final static String SORT_KET = "sortBy";
     final static String USER_COLLECTION="col";
 
+    public static final int ID_MOVIE_LOADER_POP= 28;
+
+    public static final int ID_MOVIE_LOADER_TOP = 29;
+
+    public static final int ID_MOVIE_LOADER_COL = 30;
+
+    private static MovieListFragment movieListFragment;
+
 
 
 
@@ -53,26 +70,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R
                 .layout.activity_main);
 
-        if (savedInstanceState != null){
-            MovieListFragment mlf = (MovieListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.movie_list_fragment);
-            ((StaggeredGridLayoutManager)mlf.mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(10,-593);
-        }
-
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,44 +102,40 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         switch (theSelectedItemId){
             case R.id.action_sort_by_popular:
-                Log.v("menu","pop");
-                bundle.putString(SORT_KET,SORT_BY_POP);
+                Log.v(TAG,"pop");
+                mlf.resetPosition();
                 getSupportLoaderManager().restartLoader(
-                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                        ID_MOVIE_LOADER_POP,bundle,mlf.callbacks
                 );
-                bundle.clear();
                 MoviePerference.setSortWayFromPerf(this,SORT_BY_POP);
                 break;
             case R.id.action_sort_by_rating:
-                Log.v("menu","top");
-                bundle.putString(SORT_KET,SORT_BY_TOP);
+                Log.v(TAG,"top");
+                mlf.resetPosition();
                 getSupportLoaderManager().restartLoader(
-                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                        ID_MOVIE_LOADER_TOP,null,mlf.callbacks
                 );
-                bundle.clear();
                 MoviePerference.setSortWayFromPerf(this,SORT_BY_TOP);
                 break;
             case R.id.action_user_collection:
-                bundle.putString(SORT_KET,USER_COLLECTION);
+                mlf.resetPosition();
                 getSupportLoaderManager().restartLoader(
-                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                        ID_MOVIE_LOADER_COL,null,mlf.callbacks
                 );
-                bundle.clear();
                 MoviePerference.setSortWayFromPerf(this,USER_COLLECTION);
                 break;
             case R.id.action_settings:
+
                 Intent startSettingsActivity = new
                         Intent(this,SettingsActivity.class);
                 startActivity(startSettingsActivity);
                 break;
             case R.id.action_reflash:
-
+                mlf.resetPosition();
                 MovieSyncUtils.startImmediateSync(this);
-                bundle.putString(SORT_KET,SORT_BY_POP);
                 getSupportLoaderManager().restartLoader(
-                        ID_MOVIE_LOADER,bundle,mlf.callbacks
+                        ID_MOVIE_LOADER_POP,null,mlf.callbacks
                 );
-                bundle.clear();
                 MoviePerference.setSortWayFromPerf(this,SORT_BY_POP);
 
                 break;
@@ -136,9 +145,4 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.v("KEY:",key);
-    }
 }

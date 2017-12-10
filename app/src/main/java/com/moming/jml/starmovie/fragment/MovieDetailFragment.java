@@ -1,6 +1,7 @@
 package com.moming.jml.starmovie.fragment;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Outline;
@@ -70,6 +71,8 @@ public class MovieDetailFragment extends Fragment {
     private int mCollection;
 
     private static final int ID_DETAIL_LOADER = 109;
+
+    public static final String TAG= MovieDetailFragment.class.getSimpleName();
 
     private LoaderManager.LoaderCallbacks<Cursor> detailLoader;
 
@@ -178,6 +181,7 @@ public class MovieDetailFragment extends Fragment {
         };
         mMovieDetailFrameLayout.setOutlineProvider(mProvider);
 
+        //内容加载器
         detailLoader = new LoaderManager.LoaderCallbacks<Cursor>() {
 
 
@@ -244,15 +248,9 @@ public class MovieDetailFragment extends Fragment {
             mPadDefault.setVisibility(View.VISIBLE);
             mScrollView.setVisibility(View.INVISIBLE);
         }
-
-
-
-
-
-
         return view;
     }
-
+    //百度搜索
     private void searchMovie(String name){
         Uri search = Uri.parse("https://baidu.com/s").buildUpon()
                 .appendQueryParameter("wd",name).build();
@@ -263,7 +261,7 @@ public class MovieDetailFragment extends Fragment {
         }
 
     }
-
+    //打开Youtube链接
     private void openVideoUrl(String key){
         Uri video = NetworkUtils.buildYouTuBeUrl(key);
         Toast.makeText(getContext(),video.toString(),Toast.LENGTH_SHORT).show();
@@ -275,7 +273,7 @@ public class MovieDetailFragment extends Fragment {
         }
 
     }
-
+    //收藏Task
     class ClickTask extends AsyncTask<String,Void,Integer>{
 
         @Override
@@ -318,60 +316,90 @@ public class MovieDetailFragment extends Fragment {
 
         }
     }
-
+    //预告加载Task
     class VideosTask extends AsyncTask<String,Void,VideosEntity[]>{
 
         @Override
         protected VideosEntity[] doInBackground(String... params) {
             String id = params[0];
-            VideosEntity[] ves = null;
+            VideosEntity[] ves;
             try {
                 ves =OpenMovieJsonUtilsFromMovieDb.getMovieVideoJsonFromMD(id);
+
+                Log.v(TAG,Integer.toString(ves.length));
+                for (int i=0;i<ves.length;i++){
+                    Log.v(TAG,ves[i].getInfo());
+                    Log.v(TAG,ves[i].getVideo_name());
+                }
+
+                return ves;
             } catch (JSONException e) {
                 e.printStackTrace();
+                return null;
             }
-            return ves;
+
         }
 
         @Override
         protected void onPostExecute(VideosEntity[] videosEntities) {
             if (videosEntities[0].getInfo()!="success"||videosEntities==null){
                 mNoVideosTextView.setVisibility(View.VISIBLE);
-                mVideosList.setVisibility(View.GONE);
-
-
+                mVideosList.setVisibility(View.INVISIBLE);
             }else {
-                mNoVideosTextView.setVisibility(View.INVISIBLE);
-                mVideosList.setVisibility(View.VISIBLE);
-                mVideosAdapter = new VideosAdapter(getContext(),videosEntities);
-                mVideosList.setAdapter(mVideosAdapter);
-                mVideosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String key = view.getTag().toString();
-                        Toast.makeText(getContext(),key,Toast.LENGTH_SHORT).show();
-                        openVideoUrl(key);
 
-
+                if (getContext()!=null){
+                    mNoVideosTextView.setVisibility(View.INVISIBLE);
+                    mVideosList.setVisibility(View.VISIBLE);
+                    mVideosAdapter = new VideosAdapter(getContext(),videosEntities);
+                    mVideosList.setAdapter(mVideosAdapter);
+                    int totalVideoHeight = 0;
+                    for (int i=0;i<mVideosAdapter.getCount();i++){
+                        View videoItem = mVideosAdapter.getView(i,null,mVideosList);
+                        videoItem.measure(0,0);
+                        totalVideoHeight += videoItem.getMeasuredHeight();
                     }
-                });
+
+                    ViewGroup.LayoutParams params = mVideosList.getLayoutParams();
+
+                    params.height =totalVideoHeight+(mVideosList.getDividerHeight()*
+                            (mVideosAdapter.getCount()-1));
+
+                    mVideosList.setLayoutParams(params);
+
+
+                    mVideosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            String key = view.getTag().toString();
+                            Toast.makeText(getContext(),key,Toast.LENGTH_SHORT).show();
+                            openVideoUrl(key);
+
+
+                        }
+                    });
+                }else {
+                    mNoVideosTextView.setVisibility(View.VISIBLE);
+                    mVideosList.setVisibility(View.INVISIBLE);
+                }
+
             }
         }
     }
-
+    //电影时长加载Task
     class RuntimeTask extends AsyncTask<String,Void,String>{
 
         @Override
         protected String doInBackground(String... params) {
             String id = params[0];
-            String res = null;
+            String res;
             try {
                 res = OpenMovieJsonUtilsFromMovieDb.getMovieRuntimeFromMD(id);
-
+                return res;
             } catch (JSONException e) {
                 e.printStackTrace();
+                return null;
             }
-            return res;
+
         }
 
         @Override
@@ -379,29 +407,27 @@ public class MovieDetailFragment extends Fragment {
             mMovieRuntimeTextView.setText(s);
         }
     }
-
-
-
-
-
-
+    //评论加载Task
     class ReviewsTask extends AsyncTask<String,Void,ReviewsEntity[]>{
 
         @Override
         protected ReviewsEntity[] doInBackground(String... params) {
 
             String id = params[0];
-            ReviewsEntity[] res = null;
+            ReviewsEntity[] res;
             try {
                 res = OpenMovieJsonUtilsFromMovieDb
                         .getMovieReviewsJsonFromMD(id);
                 Log.v("re",res[0].getInfo());
+                return res;
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
+                return null;
             }
 
-            return res;
+
         }
 
         @Override
@@ -413,16 +439,20 @@ public class MovieDetailFragment extends Fragment {
                 mReviewsList.setVisibility(View.GONE);
 
             }else {
-                mNoReviewsTextView.setVisibility(View.INVISIBLE);
-                mReviewsList.setVisibility(View.VISIBLE);
-                mReviewsAdapter = new ReviewsAdapter(getContext(),reviewsEntities);
-                mReviewsList.setAdapter(mReviewsAdapter);
+                if (getContext()!=null){
+                    mNoReviewsTextView.setVisibility(View.INVISIBLE);
+                    mReviewsList.setVisibility(View.VISIBLE);
+                    mReviewsAdapter = new ReviewsAdapter(getContext(),reviewsEntities);
+                    mReviewsList.setAdapter(mReviewsAdapter);
+                }else {
+                    mNoReviewsTextView.setText("暂无评论");
+                    mNoReviewsTextView.setVisibility(View.VISIBLE);
+                    mReviewsList.setVisibility(View.GONE);
+                }
 
 
             }
         }
     }
-
-
 
 }
