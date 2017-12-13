@@ -8,8 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -18,18 +16,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.NestedActivityResultFragment;
-import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.bus.ActivityResultBus;
-import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.bus.ActivityResultEvent;
 import com.moming.jml.starmovie.IndexMovieAdapter;
-import com.moming.jml.starmovie.MainActivity;
 import com.moming.jml.starmovie.MovieDetailActivity;
 import com.moming.jml.starmovie.R;
 import com.moming.jml.starmovie.data.MovieContract;
@@ -388,6 +380,16 @@ public class MovieListFragment extends Fragment implements
         Log.v(TAG,"destroyView");
         Log.v(TAG,"destroyView lastOffset"+Integer.toString(lastOffset));
         Log.v(TAG,"destroyView lastPosition"+Integer.toString(lastPosition));
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(LASTPOSITION,lastPosition);
+        bundle.putInt(LASTOFFSET,lastOffset);
+
+        if (mBundle==null){
+            mBundle = new Bundle();
+        }
+
+        onSaveInstanceState(mBundle);
     }
 
 
